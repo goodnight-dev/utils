@@ -1,0 +1,49 @@
+{
+  "name": "@goodnight-dev/string",
+  "version": "0.0.0",
+  "description": "String utilities — part of the @goodnight-dev utility suite.",
+  "keywords": [
+    "utils",
+    "string",
+    "typescript",
+    "esm",
+    "tree-shakable"
+  ],
+  "license": "MIT",
+  "author": "Ian Goodnight",
+  "homepage": "https://github.com/goodnight-dev/utils/tree/main/packages/string#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/goodnight-dev/utils.git",
+    "directory": "packages/string"
+  },
+  "bugs": {
+    "url": "https://github.com/goodnight-dev/utils/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsdown"
+  },
+  "devDependencies": {
+    "tsdown": "^0.22.3",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "name": "@goodnight-dev/utils",
+  "version": "0.0.0",
+  "description": "The complete @goodnight-dev utility suite — import everything or by subpath.",
+  "keywords": [
+    "utils",
+    "typescript",
+    "esm",
+    "tree-shakable",
+    "lodash"
+  ],
+  "license": "MIT",
+  "author": "Ian Goodnight",
+  "homepage": "https://github.com/goodnight-dev/utils#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/goodnight-dev/utils.git",
+    "directory": "packages/utils"
+  },
+  "bugs": {
+    "url": "https://github.com/goodnight-dev/utils/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./string": {
+      "types": "./dist/string.d.mts",
+      "import": "./dist/string.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsdown"
+  },
+  "dependencies": {
+    "@goodnight-dev/string": "workspace:*"
+  },
+  "devDependencies": {
+    "tsdown": "^0.22.3",
+    "typescript": "^6.0.3"
+  }
+}
