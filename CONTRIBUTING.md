@@ -91,6 +91,13 @@ Run `pnpm check` before opening a pull request.
 5. If the implementation has interesting alternatives, add `src/<name>.md` (§3).
 6. Run `pnpm check`, then add a changeset: `pnpm changeset`.
 
+For the full walkthrough — including adding a whole new package and cutting a
+release — see the [recipes](./docs/recipes/):
+
+- [Adding a function](./docs/recipes/adding-a-function.md)
+- [Adding a package](./docs/recipes/adding-a-package.md)
+- [Cutting a release](./docs/recipes/cutting-a-release.md)
+
 ## Commit conventions
 
 Commit messages follow

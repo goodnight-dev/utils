@@ -75,8 +75,16 @@ pnpm test           # run the test suite (vitest)
 pnpm typecheck      # tsc --noEmit across packages
 pnpm lint           # eslint
 pnpm format         # prettier --check
-pnpm check          # lint + build + typecheck + test
+pnpm check          # everything: format, lint, build, typecheck, test, exports
+pnpm docs:build     # generate the API docs site (TypeDoc)
 ```
+
+## Documentation
+
+- **[API reference](https://goodnight-dev.github.io/utils/)** — generated from
+  TSDoc comments.
+- **[`docs/`](./docs/)** — recipes (adding a function, adding a package, cutting
+  a release) and architecture decision records.
 
 ## License
 
