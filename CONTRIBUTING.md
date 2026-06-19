@@ -15,8 +15,8 @@ or functional-programming aesthetics.
 
 - **Correctness first, then speed.** "Safe" means correct across the entire
   input domain — Unicode, empty values, boundary cases — and free of footguns.
-  We never trade correctness for a microbenchmark win. "Bomb-proof" beats
-  "fast but wrong."
+  We never trade correctness for a microbenchmark win. "Bomb-proof" beats "fast
+  but wrong."
 - **Avoid regular expressions** when a direct `charCodeAt` / `charAt` / `slice`
   approach is as correct and faster. Regex is a last resort, not a reflex.
 - **Minimize allocations** and intermediate strings/arrays in hot paths.
@@ -94,10 +94,10 @@ Run `pnpm check` before opening a pull request.
 ## Commit conventions
 
 Commit messages follow
-[Conventional Commits](https://www.conventionalcommits.org/) and are **enforced**
-by `commitlint` on the `commit-msg` git hook. The hooks are wired up with
-[lefthook](https://lefthook.dev) and installed automatically by the `prepare`
-script when you run `pnpm install`.
+[Conventional Commits](https://www.conventionalcommits.org/) and are
+**enforced** by `commitlint` on the `commit-msg` git hook. The hooks are wired
+up with [lefthook](https://lefthook.dev) and installed automatically by the
+`prepare` script when you run `pnpm install`.
 
 Format:
 
@@ -134,9 +134,9 @@ own.
 Workflow:
 
 1. Make your change and commit it with a conventional-commit message.
-2. Run `pnpm changeset`, pick the affected package(s) and the bump level
-   (patch / minor / major), and write a short summary. This writes a markdown
-   file under `.changeset/`.
+2. Run `pnpm changeset`, pick the affected package(s) and the bump level (patch
+   / minor / major), and write a short summary. This writes a markdown file
+   under `.changeset/`.
 3. Commit that changeset alongside your change.
 
 At release time, `pnpm version-packages` (`changeset version`) consumes the

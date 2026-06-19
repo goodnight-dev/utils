@@ -26,17 +26,17 @@ independent per-package versioning.
 
 2. **Conventional Commits are enforced for history hygiene only — not for
    versioning.** `commitlint` (with `@commitlint/config-conventional`) runs on
-   the `commit-msg` git hook via `lefthook`. The commit _type_ (`feat`, `fix`, …)
-   documents intent in the log; it does **not** compute version numbers.
+   the `commit-msg` git hook via `lefthook`. The commit _type_ (`feat`, `fix`,
+   …) documents intent in the log; it does **not** compute version numbers.
 
 ## Alternatives considered
 
 - **release-please (commit-driven, monorepo manifest mode).** Infers each
-  package's bump from Conventional Commits scoped to that package by changed file
-  paths, and opens per-package release PRs. Rejected as the _primary_ mechanism:
-  the per-package bump intent has to be _inferred_ from file paths, which is
-  fragile for cross-cutting commits or shared files, and it surrenders explicit
-  author control over per-package bumps.
+  package's bump from Conventional Commits scoped to that package by changed
+  file paths, and opens per-package release PRs. Rejected as the _primary_
+  mechanism: the per-package bump intent has to be _inferred_ from file paths,
+  which is fragile for cross-cutting commits or shared files, and it surrenders
+  explicit author control over per-package bumps.
 
 - **semantic-release (+ multi-semantic-release / semantic-release-monorepo).**
   semantic-release is fundamentally single-package; monorepo support is bolted

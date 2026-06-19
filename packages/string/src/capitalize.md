@@ -1,7 +1,7 @@
 # `capitalize`
 
-> Uppercase the first character of a string and lowercase the rest.
-> (Same semantics as lodash `capitalize`; for upper-first-only see a future
+> Uppercase the first character of a string and lowercase the rest. (Same
+> semantics as lodash `capitalize`; for upper-first-only see a future
 > `upperFirst`.)
 
 ## Chosen implementation
@@ -18,8 +18,8 @@ Why this one:
 - **Unicode-correct casing.** `toUpperCase` / `toLowerCase` apply the default
   Unicode case mappings, so `é`, `ß`, Cyrillic, Greek, etc. are handled. This is
   the "safe / bomb-proof" requirement.
-- **Empty string falls out for free.** `''.charAt(0)` is `''` and
-  `''.slice(1)` is `''`, so the result is `''` with no branch.
+- **Empty string falls out for free.** `''.charAt(0)` is `''` and `''.slice(1)`
+  is `''`, so the result is `''` with no branch.
 - **Cheap.** Two short-lived strings (first char, the rest) plus one
   concatenation; no loop, no branching.
 
@@ -87,6 +87,6 @@ const [first] = new Intl.Segmenter().segment(value)
 
 ## Gotchas
 
-- Astral-plane first characters (e.g. `𝒜`) are processed at the UTF-16
-  code-unit level, not the grapheme level. Acceptable for the general case, and
-  documented here for honesty. Use approach #5 if grapheme correctness matters.
+- Astral-plane first characters (e.g. `𝒜`) are processed at the UTF-16 code-unit
+  level, not the grapheme level. Acceptable for the general case, and documented
+  here for honesty. Use approach #5 if grapheme correctness matters.
