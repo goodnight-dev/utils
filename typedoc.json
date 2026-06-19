@@ -1,0 +1,14 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPointStrategy": "packages",
+  "entryPoints": ["packages/string"],
+  "out": "docs/api",
+  "name": "@goodnight-dev/utils",
+  "includeVersion": false,
+  "hideGenerator": true,
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "navigationLinks": {
+    "GitHub": "https://github.com/goodnight-dev/utils"
+  }
+}
