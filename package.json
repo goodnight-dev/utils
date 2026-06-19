@@ -13,7 +13,7 @@
   "scripts": {
     "prepare": "lefthook install",
     "build": "pnpm -r build",
-    "docs": "typedoc",
+    "docs:build": "typedoc",
     "docs:watch": "typedoc --watch",
     "typecheck": "pnpm -r exec tsc --noEmit",
     "test": "vitest run",
