@@ -24,7 +24,7 @@
     "publint": "pnpm -r exec publint",
     "attw": "pnpm -r exec attw --pack --profile esm-only .",
     "check:exports": "pnpm run publint && pnpm run attw",
-    "check": "pnpm run lint && pnpm run build && pnpm run typecheck && pnpm run test && pnpm run check:exports",
+    "check": "pnpm run format && pnpm run lint && pnpm run build && pnpm run typecheck && pnpm run test && pnpm run check:exports",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "pnpm run build && changeset publish"
