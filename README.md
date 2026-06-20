@@ -3,8 +3,13 @@
 A small, strict, modern TypeScript utility suite — the everyday helpers you end
 up rewriting in every project, packaged the right way.
 
-> **Status:** early scaffolding. This repo is a showcase of npm packaging best
-> practices as much as it is a utility library.
+[![npm](https://img.shields.io/npm/v/@goodnight-dev/utils)](https://www.npmjs.com/package/@goodnight-dev/utils)
+[![CI](https://github.com/goodnight-dev/utils/actions/workflows/ci.yml/badge.svg)](https://github.com/goodnight-dev/utils/actions/workflows/ci.yml)
+[![docs](https://img.shields.io/badge/docs-online-blue)](https://goodnight-dev.github.io/utils/)
+
+> **Status:** published on npm — the packaging, CI, docs, and release pipeline
+> are in place; the utility surface is still small and growing. As much a
+> showcase of npm packaging best practices as a utility library.
 
 ## Install
 
