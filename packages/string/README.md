@@ -6,10 +6,19 @@ String utilities — part of the
 Strict, modern, ESM-only TypeScript. Fully typed, tree-shakable, zero runtime
 dependencies.
 
+[![npm](https://img.shields.io/npm/v/@goodnight-dev/string)](https://www.npmjs.com/package/@goodnight-dev/string)
+[![CI](https://github.com/goodnight-dev/utils/actions/workflows/ci.yml/badge.svg)](https://github.com/goodnight-dev/utils/actions/workflows/ci.yml)
+[![docs](https://img.shields.io/badge/docs-online-blue)](https://goodnight-dev.github.io/utils/)
+
 ## Install
 
 ```sh
+# via pnpm
 pnpm add @goodnight-dev/string
+# or via npm
+npm install @goodnight-dev/string
+# or via yarn
+yarn add @goodnight-dev/string
 ```
 
 ## Usage
@@ -29,6 +38,14 @@ import { capitalize } from '@goodnight-dev/utils';
 ```
 
 ## API
+
+### `camelCase(value: string): string`
+
+Converts a delimited string to camelCase. Delimiters are space, hyphen, and
+underscore. Unicode-correct: casing is applied via the default Unicode case
+mappings, not ASCII-only bit math. See the
+[implementation notes](https://github.com/goodnight-dev/utils/blob/main/packages/string/src/camel-case.md)
+for the alternatives considered and why this approach was chosen.
 
 ### `capitalize(value: string): string`
 
