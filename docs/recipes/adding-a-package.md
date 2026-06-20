@@ -53,14 +53,14 @@ Create `packages/array/` with these files.
 `packages/array/tsdown.config.ts`:
 
 ```ts
-import { defineConfig } from 'tsdown'
+import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   entry: ['src/index.ts'],
   format: 'esm',
   dts: true,
   clean: true,
-})
+});
 ```
 
 `packages/array/src/index.ts` — start empty, or with your first export.
@@ -104,13 +104,13 @@ both work:
 - Create `packages/utils/src/array.ts`:
 
   ```ts
-  export * from '@goodnight-dev/array'
+  export * from '@goodnight-dev/array';
   ```
 
 - Add it to the barrel `packages/utils/src/index.ts`:
 
   ```ts
-  export * from '@goodnight-dev/array'
+  export * from '@goodnight-dev/array';
   ```
 
 ## 4. Add it to the API docs

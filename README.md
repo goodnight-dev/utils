@@ -25,13 +25,13 @@ pnpm add @goodnight-dev/string
 
 ```ts
 // 1. Granular package — smallest dependency surface, versioned on its own.
-import { capitalize } from '@goodnight-dev/string'
+import { capitalize } from '@goodnight-dev/string';
 
 // 2. Umbrella subpath — one dependency, organized by area.
-import { capitalize } from '@goodnight-dev/utils/string'
+import { capitalize } from '@goodnight-dev/utils/string';
 
 // 3. Whole suite — everything from one entry point.
-import { capitalize } from '@goodnight-dev/utils'
+import { capitalize } from '@goodnight-dev/utils';
 ```
 
 All three are fully typed, ESM-only, and tree-shakable.

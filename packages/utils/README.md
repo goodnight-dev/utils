@@ -15,10 +15,10 @@ pnpm add @goodnight-dev/utils
 
 ```ts
 // the whole suite
-import { capitalize } from '@goodnight-dev/utils'
+import { capitalize } from '@goodnight-dev/utils';
 
 // or by area, via subpath
-import { capitalize } from '@goodnight-dev/utils/string'
+import { capitalize } from '@goodnight-dev/utils/string';
 ```
 
 Want the smallest possible dependency surface? Install the area packages

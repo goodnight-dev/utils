@@ -22,7 +22,7 @@ the [API reference](https://goodnight-dev.github.io/utils/), so make it good.
  * @example capitalize('hELLO') // => 'Hello'
  */
 export function capitalize(value: string): string {
-  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
 }
 ```
 
@@ -37,19 +37,19 @@ Create `packages/string/src/capitalize.test.ts` and cover the edge cases (empty
 input, Unicode, boundaries):
 
 ```ts
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest';
 
-import { capitalize } from './capitalize'
+import { capitalize } from './capitalize';
 
 describe('capitalize', () => {
   it('capitalizes the first letter and lowercases the rest', () => {
-    expect(capitalize('hELLO')).toBe('Hello')
-  })
+    expect(capitalize('hELLO')).toBe('Hello');
+  });
 
   it('returns an empty string unchanged', () => {
-    expect(capitalize('')).toBe('')
-  })
-})
+    expect(capitalize('')).toBe('');
+  });
+});
 ```
 
 ## 3. Export it
@@ -57,7 +57,7 @@ describe('capitalize', () => {
 Re-export from the package barrel `packages/string/src/index.ts`:
 
 ```ts
-export { capitalize } from './capitalize'
+export { capitalize } from './capitalize';
 ```
 
 ## 4. (Optional) Add implementation notes

@@ -1,1 +1,1 @@
-export * from '@goodnight-dev/string'
+export * from '@goodnight-dev/string';
