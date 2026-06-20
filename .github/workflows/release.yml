@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 # changesets/action opens the "Version Packages" PR and, on merge, publishes.
-# `id-token: write` is required for npm Trusted Publishing (OIDC) + provenance.
+# `id-token: write` is required for npm OIDC trusted publishing + provenance.
 permissions:
   contents: write
   pull-requests: write
@@ -32,11 +32,12 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
+          registry-url: https://registry.npmjs.org
 
-      # npm's native OIDC trusted publishing landed in npm 11.5.1; the npm
-      # bundled with Node can be older, so pull a recent one before publishing.
-      - name: Update npm for OIDC trusted publishing
-        run: npm install --global npm@latest && npm --version
+      # npm OIDC trusted publishing requires npm >= 11.5.1; the bundled npm can
+      # be older, so install a current one before publishing.
+      - name: Update npm
+        run: npm install --global npm@latest
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -50,3 +51,6 @@ jobs:
           publish: pnpm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # setup-node injects a placeholder NODE_AUTH_TOKEN when registry-url is
+          # set; clear it so npm uses OIDC trusted publishing, not a token.
+          NODE_AUTH_TOKEN: ''
