@@ -29,7 +29,7 @@
     "check": "pnpm run format && pnpm run lint && pnpm run build && pnpm run typecheck && pnpm run test && pnpm run check:exports",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "pnpm run build && changeset publish"
+    "release": "pnpm run build && node scripts/release-publish.mjs"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -47,6 +47,7 @@
     "@vitest/coverage-v8": "^4.1.9",
     "eslint": "^10.5.0",
     "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.6.0",
     "lefthook": "^2.1.9",
     "prettier": "^3.8.4",
     "publint": "^0.3.21",

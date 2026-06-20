@@ -50,5 +50,3 @@ jobs:
           publish: pnpm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Generate npm provenance attestations on publish.
-          NPM_CONFIG_PROVENANCE: 'true'
