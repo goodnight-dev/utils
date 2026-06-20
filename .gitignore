@@ -8,3 +8,7 @@ coverage/
 
 # TypeDoc output
 docs/api/
+
+# Local working directories (session notes, scratch output)
+.planning/
+.tmp/
