@@ -1,34 +1,54 @@
 # `camelCase`
 
-> Convert a delimited string (`snake_case`, `kebab-case`, `space separated`) to
-> `camelCase`. Unicode-correct: casing is applied via the default Unicode case
-> mappings, not ASCII-only bit math.
+> Convert a string to `camelCase`. Word boundaries are any run of one or more
+> non-alphanumeric characters (`\p{L}` / `\p{N}`) — this covers the common
+> delimiters (space, hyphen, underscore) as well as arbitrary punctuation.
+> Non-alphanumeric characters are dropped from the output, not preserved.
+> Unicode-correct: alphanumeric detection and casing both use Unicode semantics,
+> not ASCII-only bit math.
 
 ## Chosen implementation
 
-\`\`\`ts /\*\*
+```ts
+// for unicode fallback detection
+const UNICODE_ALPHANUMERIC_REGEX = /\p{L}|\p{N}/u;
 
-- Convert a string to camelCase.
--
-- @param value - The string to convert.
-- @returns The camelCase string. An empty string is returned unchanged.
--
-- @example
-- \`\`\`ts
-- camelCase('hello world') // => 'helloWorld'
-- camelCase('foo_bar') // => 'fooBar'
-- camelCase('baz-qux') // => 'bazQux'
-- camelCase(' leading and trailing ') // => 'leadingAndTrailing'
-- camelCase('--multiple---separators--') // => 'multipleSeparators'
-- \`\`\` \*/ export function camelCase(value: string): string { const length =
-  value.length; const output = new Array<string>(length);
+export function camelCase(value: string): string {
+  const length = value.length;
+  const output = new Array<string>(length);
 
-let capitalizeNext = false; let i = 0; let outIndex = 0; let started = false;
+  let capitalizeNext = false;
+  let i = 0;
+  let outIndex = 0;
+  let started = false;
 
-while (i < length) { const code = value.charCodeAt(i); // check for space (32),
-hyphen (45), and underscore (95) if (code === 32 || code === 45 || code === 95)
-{ capitalizeNext = started; i++; continue; }
+  while (i < length) {
+    const code = value.charCodeAt(i);
+    // ascii character fast path, skipping any regex checks for non-alphanumeric
+    const isAsciiAlphanumeric =
+      (code >= 48 && code <= 57) || // 0-9
+      (code >= 65 && code <= 90) || // A-Z
+      (code >= 97 && code <= 122); // a-z
 
+    if (isAsciiAlphanumeric) {
+      const character = value.charAt(i);
+      output[outIndex++] = capitalizeNext
+        ? character.toUpperCase()
+        : character.toLowerCase();
+      capitalizeNext = false;
+      started = true;
+      i++;
+      continue;
+    }
+
+    // ascii delimiters fast path: space (32), hyphen (45), and underscore (95)
+    if (code === 32 || code === 45 || code === 95) {
+      capitalizeNext = started;
+      i++;
+      continue;
+    }
+
+    // non-ascii: full code point handling with regex check for alphanumeric
     const codePoint = value.codePointAt(i);
     if (codePoint === undefined) {
       break; // safety check, should not happen
@@ -36,130 +56,176 @@ hyphen (45), and underscore (95) if (code === 32 || code === 45 || code === 95)
     const character = String.fromCodePoint(codePoint);
     const charLength = codePoint > 0xffff ? 2 : 1; // surrogate pair handling
 
-    output[outIndex++] = capitalizeNext
-      ? character.toUpperCase()
-      : character.toLowerCase();
-    capitalizeNext = false;
-    started = true;
+    if (UNICODE_ALPHANUMERIC_REGEX.test(character)) {
+      output[outIndex++] = capitalizeNext
+        ? character.toUpperCase()
+        : character.toLowerCase();
+      capitalizeNext = false;
+      started = true;
+    } else {
+      capitalizeNext = started;
+    }
     i += charLength;
+  }
 
+  output.length = outIndex; // trim the output array to the actual length
+  return output.join('');
 }
-
-output.length = outIndex; // trim the output array to the actual length return
-output.join(''); } \`\`\`
+```
 
 Why this one:
 
-- **Pre-sized output array.** `new Array<string>(length)` (sized to input
-  length, an upper bound on output length) plus indexed writes avoids the
-  incremental-growth checks `push` does on every call. The array is trimmed via
+- **Three-branch loop, ordered by frequency.** ASCII-alphanumeric (most common
+  in real input — identifiers, slugs, words) is checked first via pure numeric
+  comparison, then ASCII-delimiter, then non-ASCII as the slow path. The
+  expensive check (regex) only ever runs once a character has already failed
+  both cheap ASCII checks.
+- **Module-level, single-compile regex, used only on the cold path.** This is
+  not "regex as the transformation engine" — it's one classification test,
+  compiled once at module load, invoked only for non-ASCII code points. For the
+  overwhelming majority of real-world input it never executes at all.
+- **Pre-sized output array.** `new Array<string>(length)` plus indexed writes
+  avoids the incremental-growth checks `push` does on every call. Trimmed via
   `output.length = outIndex` at the end — an O(1) property update, not a
-  reallocation — so delimiter-heavy input doesn't cost more than one array
-  allocation.
+  reallocation.
 - **`codePointAt` + explicit length advance (`charLength`) for full Unicode
   correctness.** Surrogate pairs (emoji, astral-plane characters) are read as a
   single code point and the loop index steps by 2 instead of 1, avoiding the
   classic bug of splitting a pair mid-character.
 - **No non-null assertion.** `codePointAt` is typed to return
   `number | undefined`; rather than asserting that away with `!`, the function
-  narrows with an explicit `if (codePoint === undefined) break`. This is
-  provably dead code given `i < length`, but it's an honest guard instead of a
-  silenced type hole — the function fails safe rather than risking `NaN`/garbage
-  output if the invariant is ever violated by a future edit.
-- **`charCodeAt` retained for the delimiter check.** Delimiters (`' '`, `'-'`,
-  `'_'`) are guaranteed single-code-unit ASCII, so there's no reason to pay for
-  `codePointAt` there — it's reserved for content characters, where correctness
-  actually depends on it.
+  narrows with an explicit `if (codePoint === undefined) break`. Provably dead
+  code given `i < length`, but an honest guard instead of a silenced type hole.
 - **`started` flag instead of an output-length check.**
   `capitalizeNext = started` collapses "a delimiter has been seen" and "suppress
-  capitalization on leading delimiters" into one assignment, avoiding a separate
-  length check per character.
+  capitalization on leading delimiters" into one assignment.
 - **Unicode-correct casing**, same rationale as `capitalize`:
   `toUpperCase`/`toLowerCase` apply default Unicode case mappings, so accented
   Latin, Cyrillic, Greek, etc. are capitalized correctly.
 
 ## Alternatives considered
 
-### 1. Regex replace
+### 1. Regex replace (whole transformation)
 
-\`\`\`ts value .replace(/[^a-zA-Z0-9]+(.)/g, (\_, c: string) => c.toUpperCase())
-.replace(/^[A-Z]/, (c) => c.toLowerCase()) \`\`\`
+```ts
+value
+  .replace(/[^a-zA-Z0-9]+(.)/g, (_, c: string) => c.toUpperCase())
+  .replace(/^[A-Z]/, (c) => c.toLowerCase());
+```
 
 - Simplest to read, and fine for non-hot-path call sites.
-- Regex compile + engine invocation overhead on every call; consistently the
-  slowest option across every variant benchmarked.
-- `(.)` matches a single UTF-16 code unit, not a full code point — same
+- Regex compile + engine invocation overhead on _every_ call, on the _entire_
+  string — a fundamentally different cost profile than the single module-level,
+  cold-path-only regex in the chosen implementation.
+- `[a-zA-Z0-9]` is ASCII-only, so it's actually less correct than the chosen
+  version: non-ASCII letters and digits would be treated as delimiters. `(.)`
+  also matches a single UTF-16 code unit, not a full code point — same
   surrogate-pair risk as a naive indexed loop.
-- Rejected as the library default: this is a shared utility, not a one-off
-  script, so the per-call regex overhead isn't worth paying for every consumer.
+- Rejected as the library default: slower on every call and less correct on
+  non-ASCII input than the chosen implementation.
 
 ### 2. `for...of` over the string
 
-\`\`\`ts for (const character of value) { if (character === ' ' || character ===
-'-' || character === '\_') { capitalizeNext = started continue }
-output.push(capitalizeNext ? character.toUpperCase() : character.toLowerCase())
-... } \`\`\`
+```ts
+for (const character of value) {
+  if (!UNICODE_ALPHANUMERIC.test(character)) {
+    capitalizeNext = started
+    continue
+  }
+  output.push(capitalizeNext ? character.toUpperCase() : character.toLowerCase())
+  ...
+}
+```
 
 - Iterates by code point natively, so surrogate pairs are handled with no manual
   width bookkeeping and no `undefined` case to guard at all.
 - Notably more readable — no index arithmetic, no `codePointAt`/`charCodeAt`
   split, no defensive `break`.
 - Doesn't expose an index, so the output array can't be pre-sized; falls back to
-  `push`, which carries incremental-growth overhead absent from the indexed
-  version.
-- Rejected as the default, but only narrowly: the perf delta versus the chosen
-  implementation is small (single-digit percent in practice). Worth reaching for
-  instead of the indexed version in contexts where readability is weighted
-  higher than this library's bar, or if a maintenance burden ever shows up
-  around the manual index math.
+  `push`.
+- Doesn't expose a cheap way to skip the regex for the ASCII common case without
+  re-adding a `charCodeAt` check anyway — at which point you've reconstructed
+  most of the chosen implementation's branching but lost the pre-sized array.
+- Rejected as the default, but only narrowly: worth reaching for instead of the
+  indexed version if the regex branch ends up being hit often enough that the
+  lost ASCII fast-path advantage stops mattering, or if the manual index math
+  becomes a real maintenance burden.
 
-### 3. ASCII fast path via `charCodeAt` + bitwise case conversion
+### 3. ASCII-only alphanumeric test, no regex, non-ASCII letters preserved as content
 
-\`\`\`ts if (cc >= 97 && cc <= 122) cc -= 32 // lower -> upper, ASCII only
-\`\`\`
+```ts
+// non-ASCII: treat as alphanumeric only if casing changes it
+const upper = character.toUpperCase();
+const lower = character.toLowerCase();
+const isAlphanumeric = upper !== lower; // catches cased letters, misses CJK & non-ASCII digits
+```
 
-- Fastest variant measured by a wide margin: no `toUpperCase()` call overhead,
-  single typed-array allocation, no per-character string allocation until the
-  final join.
-- **Not bomb-proof:** the `+32`/`-32` relationship only holds for ASCII A–Z/a–z.
-  Non-ASCII letters (`é`, `ñ`, Cyrillic, Greek) pass through uncapitalized
-  rather than erroring — silently wrong, not a crash, which is worse for a
-  shared utility no one is guaranteed to read before importing.
-- Also breaks on astral-plane input if implemented over a `Uint16Array`, since
-  each UTF-16 code unit is processed independently rather than as a full code
-  point — same class of bug this implementation's `charLength` logic exists to
-  prevent.
-- Rejected: same reasoning as `capitalize` §3 — a function named `camelCase`
-  (not `camelCaseAscii`) carries an implicit contract to handle arbitrary string
-  input correctly. Speed on a subset of inputs isn't a substitute for
-  correctness on the full domain, especially when the function will be imported
-  into contexts where the input isn't predictable.
+- Avoids any `RegExp` entirely, riding on `toUpperCase`/`toLowerCase` calls
+  already in the function.
+- Correctly classifies _cased_ non-ASCII letters (é, ñ, Cyrillic, Greek,
+  Armenian) without a Unicode data dependency.
+- **Incomplete:** caseless scripts (CJK ideographs) and non-ASCII digits
+  (Arabic-Indic numerals, full-width digits) have no case distinction at all, so
+  this test silently misclassifies them as delimiters. No regex-free primitive
+  in JS distinguishes "Unicode letter/digit" from "punctuation" for those
+  without embedding actual Unicode category data.
+- Rejected: a partial, undocumented-by-default gap (CJK as the most
+  consequential case) felt riskier than a single, clearly-scoped, cold-path
+  regex test. Worth reconsidering if a hard no-regex constraint outweighs the
+  CJK gap for this library's actual user base.
 
-### 4. `Set` of delimiter characters instead of chained `===`
+### 4. ASCII fast path via `charCodeAt` + bitwise case conversion (no Unicode handling at all)
 
-\`\`\`ts const delimiters = new Set([' ', '-', '_']) if
-(delimiters.has(character)) { ... } \`\`\`
+```ts
+if (cc >= 97 && cc <= 122) cc -= 32; // lower -> upper, ASCII only
+```
 
-- Theoretically cleaner if the delimiter list grows.
-- Slower in practice for a fixed set this small: `Set.has()` pays for hashing +
-  bucket traversal + a method call, while 2–3 chained `===` comparisons (or, as
-  chosen, `charCodeAt` numeric comparisons) on primitives are about as cheap as
-  a check can be and are well-optimized by modern engines. The crossover point
-  favoring `Set` is generally 8–10+ members.
-- Rejected: more ceremony, measurably slower, no benefit at this scale.
+- Fastest variant measured by a wide margin.
+- **Not bomb-proof:** non-ASCII letters pass through unconverted rather than
+  erroring, and astral-plane input risks surrogate-pair corruption if
+  implemented over a fixed-width buffer.
+- Rejected: same reasoning as `capitalize` §3 and the original `camelCase`
+  writeup — a function named `camelCase` carries an implicit contract to handle
+  arbitrary string input correctly, and that's true with even more force now
+  that non-alphanumeric _detection_ (not just casing) needs to be Unicode-aware
+  too.
+
+### 5. `Set` of delimiter characters instead of numeric/regex checks
+
+```ts
+const delimiters = new Set([' ', '-', '_'])
+if (delimiters.has(character)) { ... }
+```
+
+- No longer expressive enough on its own once delimiters expanded from a fixed
+  list of three to "anything non-alphanumeric" — would need to be paired with
+  the same alphanumeric test regardless, so it doesn't actually replace any of
+  the logic above, just the three-character ASCII case.
+- Slower than chained `===`/numeric comparisons for a set this small, same
+  reasoning as before.
+- Rejected: doesn't solve the actual problem (classifying arbitrary punctuation)
+  and is slower than the numeric check it would replace.
 
 ## Gotchas
 
-- Consecutive delimiters (`"user__id"`) collapse correctly — `capitalizeNext`
-  simply stays `true` across them, so no double-capitalization or stray
-  characters appear.
-- Leading delimiters (`"_user_id"`) are handled via the `started` flag rather
-  than capitalizing the first real character — produces `"userId"`, not
-  `"UserId"`.
+- **Behavior change from earlier drafts:** non-alphanumeric characters are now
+  **dropped**, not preserved. `camelCase('foo.bar')` produces `'fooBar'`, not
+  `'foo.bar'`. Worth calling out prominently in release notes / changelog if
+  this ships after an earlier version that preserved punctuation.
+- Consecutive delimiters of any kind (`"user__id"`, `"foo...bar"`,
+  `"foo_-!bar"`) collapse correctly — `capitalizeNext` simply stays `true`
+  across them, regardless of which non-alphanumeric characters compose the run.
+- Leading delimiters (`"_user_id"`, `".foo"`) are handled via the `started` flag
+  rather than capitalizing the first real character — produces `"userId"` /
+  `"foo"`, not `"UserId"` / `"Foo"`.
 - The `if (codePoint === undefined) break` branch is unreachable given the
   `while (i < length)` guard; it exists purely to satisfy strict typing without
   an assertion, and is documented here so a future reader doesn't mistake it for
   reachable logic worth testing around.
+- `UNICODE_ALPHANUMERIC` is only ever tested against non-ASCII characters — the
+  ASCII branches return before reaching it. If the ASCII range checks are ever
+  modified, double check they still agree with what `\p{L}`/`\p{N}` would say
+  for the ASCII range, or the two paths could disagree at the boundary.
 - Locale-sensitive casing (e.g. Turkish dotless `ı`/`İ`) is **not** handled —
   this uses `toUpperCase`/`toLowerCase`, not `toLocaleUpperCase`/
   `toLocaleLowerCase`, for the same determinism rationale as `capitalize` §4. A

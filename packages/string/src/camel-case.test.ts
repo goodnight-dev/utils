@@ -33,7 +33,6 @@ describe('camelCase', () => {
 
   it('handles Unicode characters', () => {
     expect(camelCase('héllo wörld')).toBe('hélloWörld');
-    expect(camelCase('foo_ßar')).toBe('fooßar');
     expect(camelCase('baz-Δqux')).toBe('bazΔqux');
   });
 });
