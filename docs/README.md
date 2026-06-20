@@ -9,5 +9,6 @@
 - **[Architecture Decision Records](./adr/)** — the "why" behind significant
   technical choices.
   - [0001 — Versioning and commit conventions](./adr/0001-versioning-and-commit-conventions.md)
+  - [0002 — OIDC trusted publishing](./adr/0002-oidc-trusted-publishing.md)
 
 > The generated `api/` directory is build output (TypeDoc) and is not committed.
