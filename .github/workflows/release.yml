@@ -51,6 +51,6 @@ jobs:
           publish: pnpm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # setup-node injects a placeholder NODE_AUTH_TOKEN when registry-url is
-          # set; clear it so npm uses OIDC trusted publishing, not a token.
-          NODE_AUTH_TOKEN: ''
+          # No NODE_AUTH_TOKEN on purpose: setting it (real OR empty) makes npm
+          # try that token and skip OIDC. Left unset, npm (>= 11.5.1, installed
+          # above) authenticates via OIDC trusted publishing.
