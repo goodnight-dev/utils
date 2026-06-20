@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- 135d246: Adds a `camleCase` string utility.
+- 135d246: Adds a `camelCase` string utility.
 
 ## 0.1.0
 

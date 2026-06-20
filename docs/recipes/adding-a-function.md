@@ -6,6 +6,23 @@ How to add a new utility to an _existing_ package — for example, a new helper 
 
 Replace `string` / `capitalize` below with your area and function name.
 
+## Checklist
+
+Every step matters, but step 4 is the one that bites: a function can be written,
+tested, documented, and released while still being **unreachable** by consumers,
+because nothing fails. Treat the barrel and the entry-point test as part of
+"done," not paperwork.
+
+- [ ] 1. Source file with thorough TSDoc — `src/<fn>.ts`
+- [ ] 2. Per-function tests — `src/<fn>.test.ts`
+- [ ] 3. (Optional) implementation notes — `src/<fn>.md`
+- [ ] 4. **Re-export from the barrel** — `src/index.ts` _(the step that makes it
+     importable; skipping it still passes `pnpm check`)_
+- [ ] 5. **Add it to the entry-point test** — `src/index.test.ts`
+- [ ] 6. Update the package's `README.md` API section
+- [ ] 7. `pnpm check`, then `pnpm changeset` (a new function is a `minor` bump)
+- [ ] 8. Conventional-commit + PR
+
 ## 1. Write the source
 
 Create `packages/string/src/capitalize.ts` with a thorough TSDoc comment —
@@ -52,31 +69,66 @@ describe('capitalize', () => {
 });
 ```
 
-## 3. Export it
-
-Re-export from the package barrel `packages/string/src/index.ts`:
-
-```ts
-export { capitalize } from './capitalize';
-```
-
-## 4. (Optional) Add implementation notes
+## 3. (Optional) Add implementation notes
 
 If there are interesting alternatives, add a sibling
 `packages/string/src/capitalize.md` documenting how else it could be done and
 why you chose what you chose. These notes are repo-only (never published). See
 [`capitalize.md`](../../packages/string/src/capitalize.md) for the format.
 
-## 5. Verify and changeset
+## 4. Export it from the barrel
+
+Re-export from the package barrel `packages/string/src/index.ts`, kept in
+alphabetical order:
+
+```ts
+export { camelCase } from './camel-case';
+export { capitalize } from './capitalize';
+```
+
+> **This is the step that's easy to skip and hard to notice.** The tests in step
+> 2 import the function directly (`from './capitalize'`), so they pass with or
+> without this line. `build`, `typecheck`, `publint`, and `attw` all describe
+> what the barrel _does_ export — none of them know your new function was
+> supposed to be in it. Miss this line and you can write, test, document,
+> version, and publish a function that consumers simply cannot import. (This
+> happened with `camelCase` in `0.2.0`.) Step 5 is the guard against it.
+
+## 5. Add it to the entry-point test
+
+Update `packages/string/src/index.test.ts` so the new function is part of the
+package's asserted public surface. This is the one test that exercises the
+barrel, so a forgotten re-export from step 4 now fails `pnpm check` instead of
+shipping:
+
+```ts
+import * as api from './index';
+
+it('exports exactly the documented public surface', () => {
+  expect(Object.keys(api).sort()).toStrictEqual(['camelCase', 'capitalize']);
+});
+```
+
+## 6. Update the README
+
+Add the function to the `## API` section of the package's `README.md` (and to
+the usage example if it's a headline addition). The README is hand-maintained —
+it is not generated from the source — so a new export is invisible to consumers
+browsing npm until you add it here.
+
+## 7. Verify and changeset
 
 ```sh
 pnpm check        # format, lint, build, typecheck, test, package exports
 pnpm changeset    # select the package; a new function is a `minor` bump
 ```
 
-A new function is a new feature → **minor**. A bug fix → **patch**.
+A new function is a new feature → **minor**. A bug fix → **patch**. The umbrella
+`@goodnight-dev/utils` re-exports the leaves, so it is bumped automatically as a
+dependency update — you do not need a separate changeset for it.
 
-## 6. Commit and open a PR
+## 8. Commit and open a PR
 
 Use a Conventional Commit message, e.g. `feat(string): add capitalize`, and open
-a PR. CI runs `pnpm check` on Node 20, 22, and 24; merge once it's green.
+a PR. CI runs `pnpm check` on Node 20, 22, and 24; merge once it's green. Docs
+redeploy to GitHub Pages automatically on the next push to `main`.

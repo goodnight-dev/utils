@@ -25,14 +25,31 @@ describe('camelCase', () => {
     expect(camelCase('foo  bar')).toBe('fooBar');
   });
 
-  it('handles non-alphanumeric characters', () => {
+  it('treats any non-alphanumeric run as a boundary and drops it', () => {
     expect(camelCase('hello@world')).toBe('helloWorld');
     expect(camelCase('foo#bar')).toBe('fooBar');
     expect(camelCase('baz$qux')).toBe('bazQux');
+    expect(camelCase('foo.bar')).toBe('fooBar');
+    expect(camelCase('foo_-!bar')).toBe('fooBar');
+  });
+
+  it('ignores leading and trailing delimiters', () => {
+    expect(camelCase('_user_id')).toBe('userId');
+    expect(camelCase('.foo.bar.')).toBe('fooBar');
+  });
+
+  it('keeps digits and capitalizes the letter after a boundary', () => {
+    expect(camelCase('foo 123 bar')).toBe('foo123Bar');
+    expect(camelCase('version-2-final')).toBe('version2Final');
   });
 
   it('handles Unicode characters', () => {
     expect(camelCase('héllo wörld')).toBe('hélloWörld');
     expect(camelCase('baz-Δqux')).toBe('bazΔqux');
+  });
+
+  it('handles astral-plane code points without splitting surrogate pairs', () => {
+    expect(camelCase('foo😀bar')).toBe('fooBar');
+    expect(camelCase('😀leading')).toBe('leading');
   });
 });
