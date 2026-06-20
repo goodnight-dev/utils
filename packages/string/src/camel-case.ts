@@ -2,7 +2,9 @@
 const UNICODE_ALPHANUMERIC_REGEX = /\p{L}|\p{N}/u;
 
 /**
- * Convert a string to camelCase.
+ * Convert a string to camelCase. Any run of non-alphanumeric characters is a
+ * word boundary and is dropped from the output; word detection and casing are
+ * both Unicode-correct, not ASCII-only.
  *
  * @param value - The string to convert.
  * @returns The camelCase string. An empty string is returned unchanged.
@@ -45,14 +47,18 @@ export function camelCase(value: string): string {
       continue;
     }
 
-    // ascii delimiters fast path: space (32), hyphen (45), and underscore (95)
-    if (code === 32 || code === 45 || code === 95) {
+    // any other ASCII byte is a non-alphanumeric delimiter: dropped, and it
+    // marks the next alphanumeric for capitalization. Catching the whole ASCII
+    // range here (not just space/hyphen/underscore) means the Unicode regex
+    // below never runs on ASCII input at all.
+    if (code < 128) {
       capitalizeNext = started;
       i++;
       continue;
     }
 
-    // non-ascii: full code point handling with regex check for alphanumeric
+    // non-ascii (code point >= 128): full code point handling with a regex
+    // check for alphanumeric
     const codePoint = value.codePointAt(i);
     if (codePoint === undefined) {
       break; // safety check, should not happen

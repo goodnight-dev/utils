@@ -41,14 +41,18 @@ export function camelCase(value: string): string {
       continue;
     }
 
-    // ascii delimiters fast path: space (32), hyphen (45), and underscore (95)
-    if (code === 32 || code === 45 || code === 95) {
+    // any other ASCII byte is a non-alphanumeric delimiter: dropped, and it
+    // marks the next alphanumeric for capitalization. Catching the whole ASCII
+    // range here (not just space/hyphen/underscore) means the Unicode regex
+    // below never runs on ASCII input at all.
+    if (code < 128) {
       capitalizeNext = started;
       i++;
       continue;
     }
 
-    // non-ascii: full code point handling with regex check for alphanumeric
+    // non-ascii (code point >= 128): full code point handling with a regex
+    // check for alphanumeric
     const codePoint = value.codePointAt(i);
     if (codePoint === undefined) {
       break; // safety check, should not happen
@@ -77,9 +81,12 @@ Why this one:
 
 - **Three-branch loop, ordered by frequency.** ASCII-alphanumeric (most common
   in real input — identifiers, slugs, words) is checked first via pure numeric
-  comparison, then ASCII-delimiter, then non-ASCII as the slow path. The
-  expensive check (regex) only ever runs once a character has already failed
-  both cheap ASCII checks.
+  comparison, then _any_ remaining ASCII byte (`code < 128`) is handled as a
+  dropped delimiter, then non-ASCII (`code >= 128`) as the slow path. Because
+  the second branch claims the entire rest of the ASCII range, the expensive
+  regex check only ever runs on genuinely non-ASCII code points — never on
+  punctuation like `.`/`@`/`/` that a space/hyphen/underscore-only test would
+  have leaked onto the slow path.
 - **Module-level, single-compile regex, used only on the cold path.** This is
   not "regex as the transformation engine" — it's one classification test,
   compiled once at module load, invoked only for non-ASCII code points. For the
@@ -222,10 +229,13 @@ if (delimiters.has(character)) { ... }
   `while (i < length)` guard; it exists purely to satisfy strict typing without
   an assertion, and is documented here so a future reader doesn't mistake it for
   reachable logic worth testing around.
-- `UNICODE_ALPHANUMERIC` is only ever tested against non-ASCII characters — the
-  ASCII branches return before reaching it. If the ASCII range checks are ever
-  modified, double check they still agree with what `\p{L}`/`\p{N}` would say
-  for the ASCII range, or the two paths could disagree at the boundary.
+- `UNICODE_ALPHANUMERIC_REGEX` is only ever tested against non-ASCII
+  (`code >= 128`) characters — the two ASCII branches `continue` before reaching
+  it, and between them they partition the whole ASCII range (alphanumeric vs.
+  everything else). This is sound only because for ASCII, `\p{L}`/`\p{N}` is
+  exactly `0-9 A-Z a-z`; if the alphanumeric range checks are ever changed, the
+  `code < 128` delimiter branch will silently absorb the difference, so
+  re-verify the two paths still agree at the boundary.
 - Locale-sensitive casing (e.g. Turkish dotless `ı`/`İ`) is **not** handled —
   this uses `toUpperCase`/`toLowerCase`, not `toLocaleUpperCase`/
   `toLocaleLowerCase`, for the same determinism rationale as `capitalize` §4. A

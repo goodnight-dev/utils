@@ -24,9 +24,10 @@ yarn add @goodnight-dev/string
 ## Usage
 
 ```ts
-import { capitalize } from '@goodnight-dev/string';
+import { camelCase, capitalize } from '@goodnight-dev/string';
 
 capitalize('hELLO'); // => 'Hello'
+camelCase('foo-bar baz'); // => 'fooBarBaz'
 ```
 
 The same utilities are available through the umbrella package, if you'd rather
@@ -41,9 +42,10 @@ import { capitalize } from '@goodnight-dev/utils';
 
 ### `camelCase(value: string): string`
 
-Converts a delimited string to camelCase. Delimiters are space, hyphen, and
-underscore. Unicode-correct: casing is applied via the default Unicode case
-mappings, not ASCII-only bit math. See the
+Converts a string to camelCase. Any run of non-alphanumeric characters is a word
+boundary — space, hyphen, and underscore as well as arbitrary punctuation — and
+those characters are dropped from the output. Unicode-correct: both word
+detection and casing use Unicode semantics, not ASCII-only bit math. See the
 [implementation notes](https://github.com/goodnight-dev/utils/blob/main/packages/string/src/camel-case.md)
 for the alternatives considered and why this approach was chosen.
 
