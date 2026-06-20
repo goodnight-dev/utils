@@ -15,17 +15,17 @@ pnpm add @goodnight-dev/string
 ## Usage
 
 ```ts
-import { capitalize } from '@goodnight-dev/string'
+import { capitalize } from '@goodnight-dev/string';
 
-capitalize('hELLO') // => 'Hello'
+capitalize('hELLO'); // => 'Hello'
 ```
 
 The same utilities are available through the umbrella package, if you'd rather
 depend on one thing:
 
 ```ts
-import { capitalize } from '@goodnight-dev/utils/string'
-import { capitalize } from '@goodnight-dev/utils'
+import { capitalize } from '@goodnight-dev/utils/string';
+import { capitalize } from '@goodnight-dev/utils';
 ```
 
 ## API

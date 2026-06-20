@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsdown'
+import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   entry: ['src/index.ts', 'src/string.ts'],
@@ -8,4 +8,4 @@ export default defineConfig({
   // Sibling @goodnight-dev/* packages are runtime `dependencies`, so tsdown
   // keeps them external by default — the umbrella re-exports them rather than
   // bundling their source, which preserves independent versioning.
-})
+});

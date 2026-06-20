@@ -8,7 +8,7 @@
 
 ```ts
 export function capitalize(value: string): string {
-  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
 }
 ```
 
@@ -28,7 +28,7 @@ Why this one:
 ### 1. Regex replace
 
 ```ts
-value.replace(/^./, (c) => c.toUpperCase())
+value.replace(/^./, (c) => c.toUpperCase());
 ```
 
 - Different semantics: only uppercases the first character, does **not** lower
@@ -40,7 +40,7 @@ value.replace(/^./, (c) => c.toUpperCase())
 ### 2. Bracket / `at()` indexing
 
 ```ts
-const first = value[0] // `string | undefined` under noUncheckedIndexedAccess
+const first = value[0]; // `string | undefined` under noUncheckedIndexedAccess
 ```
 
 - Forces an `undefined` guard for the empty-string case. `charAt(0)` sidesteps
@@ -51,9 +51,9 @@ const first = value[0] // `string | undefined` under noUncheckedIndexedAccess
 ### 3. ASCII fast path via `charCodeAt`
 
 ```ts
-const c = value.charCodeAt(0)
+const c = value.charCodeAt(0);
 if (c >= 97 && c <= 122) {
-  return String.fromCharCode(c - 32) + value.slice(1).toLowerCase()
+  return String.fromCharCode(c - 32) + value.slice(1).toLowerCase();
 }
 ```
 
@@ -64,7 +64,7 @@ if (c >= 97 && c <= 122) {
 ### 4. Locale-aware casing
 
 ```ts
-value.charAt(0).toLocaleUpperCase() + value.slice(1).toLocaleLowerCase()
+value.charAt(0).toLocaleUpperCase() + value.slice(1).toLocaleLowerCase();
 ```
 
 - Correct for locale-sensitive mappings (e.g. Turkish dotless `ı` / `İ`).
@@ -75,7 +75,7 @@ value.charAt(0).toLocaleUpperCase() + value.slice(1).toLocaleLowerCase()
 ### 5. Grapheme-correct first "character" (`Intl.Segmenter`)
 
 ```ts
-const [first] = new Intl.Segmenter().segment(value)
+const [first] = new Intl.Segmenter().segment(value);
 // uppercase first.segment, append the rest
 ```
 
