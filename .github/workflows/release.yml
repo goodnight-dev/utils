@@ -33,6 +33,11 @@ jobs:
           node-version: 24
           cache: pnpm
 
+      # npm's native OIDC trusted publishing landed in npm 11.5.1; the npm
+      # bundled with Node can be older, so pull a recent one before publishing.
+      - name: Update npm for OIDC trusted publishing
+        run: npm install --global npm@latest && npm --version
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
