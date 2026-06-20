@@ -17,9 +17,16 @@ Releases are automated with
    affected package's version, regenerates `CHANGELOG.md` files, and bumps the
    umbrella whenever a package it re-exports changed.
 
-3. **Review and merge the "Version Packages" PR.** On merge, the workflow runs
-   `changeset publish`, publishing the newly-versioned packages to npm with
-   provenance.
+3. **Review and merge the "Version Packages" PR.** On merge, the workflow
+   publishes each newly-versioned package to npm over OIDC, with provenance.
+
+   The publish is done by
+   [`scripts/release-publish.mjs`](../../scripts/release-publish.mjs) rather
+   than `changeset publish` — `changeset publish` doesn't drive npm's OIDC
+   handshake. The script packs each package with `pnpm pack` (which resolves the
+   `workspace:` protocol) and runs `npm publish` on the tarball, which performs
+   the OIDC auth and provenance. See
+   [ADR 0002](../adr/0002-oidc-trusted-publishing.md).
 
 In the normal flow you never run `npm publish` by hand.
 
@@ -49,7 +56,7 @@ pnpm --filter @goodnight-dev/<name> publish --access public
 - Use `pnpm publish` (not `npm publish`) so the `workspace:` protocol in the
   umbrella's dependencies is resolved to real versions.
 - This bootstrap has **no provenance** — provenance is generated only by the CI
-  release workflow (via `NPM_CONFIG_PROVENANCE` + OIDC). That's expected; the
+  release workflow (`npm publish --provenance` over OIDC). That's expected; the
   bootstrap version just exists to create the package. (Do **not** put
   `provenance: true` in a package's `publishConfig`, or local publishes fail
   with "provider: null".)
