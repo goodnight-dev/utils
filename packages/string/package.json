@@ -1,6 +1,6 @@
 {
   "name": "@goodnight-dev/string",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "String utilities — part of the @goodnight-dev utility suite.",
   "keywords": [
     "utils",
