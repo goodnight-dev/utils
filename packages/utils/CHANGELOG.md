@@ -1,5 +1,12 @@
 # @goodnight-dev/utils
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [f17c743]
+  - @goodnight-dev/string@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
