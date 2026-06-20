@@ -6,8 +6,7 @@
     "utils",
     "typescript",
     "esm",
-    "tree-shakable",
-    "lodash"
+    "tree-shakable"
   ],
   "license": "MIT",
   "author": "Ian Goodnight",
