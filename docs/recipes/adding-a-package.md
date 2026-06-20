@@ -36,7 +36,7 @@ Create `packages/array/` with these files.
   },
   "files": ["dist"],
   "engines": { "node": ">=20" },
-  "publishConfig": { "access": "public", "provenance": true },
+  "publishConfig": { "access": "public" },
   "scripts": { "build": "tsdown" }
 }
 ```

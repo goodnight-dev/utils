@@ -23,30 +23,47 @@ Releases are automated with
 
 In the normal flow you never run `npm publish` by hand.
 
-## One-time setup, before a package's first publish
+## One-time setup
 
-npm Trusted Publishing needs a small amount of per-package setup, and a package
-can't be "trusted" before it exists — so the **first** publish of each new
-package is a manual bootstrap:
+### a. Let the workflow open the Version PR
 
-1. **Create the package on npm** (once per package):
+The `Release` workflow opens the "Version Packages" PR with the workflow token,
+which GitHub blocks by default. Enable it **once** (both levels, org first):
 
-   ```sh
-   npm login
-   pnpm --filter @goodnight-dev/<name> publish --access public
-   ```
+- **Org:** `https://github.com/organizations/goodnight-dev/settings/actions` →
+  _Workflow permissions_ → check **"Allow GitHub Actions to create and approve
+  pull requests."**
+- **Repo:** _Settings → Actions → General_ → the same checkbox — or
+  `gh api --method PUT repos/goodnight-dev/utils/actions/permissions/workflow -F can_approve_pull_request_reviews=true -f default_workflow_permissions=read`.
 
-   Use `pnpm publish` (not `npm publish`) so the `workspace:` protocol in the
-   umbrella's dependencies is resolved to real versions.
+### b. Bootstrap each new package onto npm
 
-2. **Configure the trusted publisher.** On npmjs.com, open the package →
-   **Settings → Trusted Publisher** and add:
-   - Provider: **GitHub Actions**
-   - Repository: `goodnight-dev/utils`
-   - Workflow: `release.yml`
+A package can't be "trusted" before it exists, so the **first** publish of each
+new package is a one-time manual bootstrap:
 
-   From then on, the `Release` workflow publishes that package over OIDC — no
-   token needed.
+```sh
+npm login
+pnpm --filter @goodnight-dev/<name> publish --access public
+```
+
+- Use `pnpm publish` (not `npm publish`) so the `workspace:` protocol in the
+  umbrella's dependencies is resolved to real versions.
+- This bootstrap has **no provenance** — provenance is generated only by the CI
+  release workflow (via `NPM_CONFIG_PROVENANCE` + OIDC). That's expected; the
+  bootstrap version just exists to create the package. (Do **not** put
+  `provenance: true` in a package's `publishConfig`, or local publishes fail
+  with "provider: null".)
+
+### c. Configure the trusted publisher
+
+On npmjs.com, open the package → **Settings → Trusted Publisher** and add:
+
+- Provider: **GitHub Actions**
+- Repository: `goodnight-dev/utils`
+- Workflow: `release.yml`
+
+From then on, the `Release` workflow publishes that package over OIDC — no token
+needed.
 
 ## Notes
 
