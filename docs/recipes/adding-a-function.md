@@ -76,6 +76,9 @@ If there are interesting alternatives, add a sibling
 why you chose what you chose. These notes are repo-only (never published). See
 [`capitalize.md`](../../packages/string/src/capitalize.md) for the format.
 
+If a note claims one approach is _faster_, back it with a benchmark rather than
+an assertion — see [Benchmarking a function](./benchmarking-a-function.md).
+
 ## 4. Export it from the barrel
 
 Re-export from the package barrel `packages/string/src/index.ts`, kept in

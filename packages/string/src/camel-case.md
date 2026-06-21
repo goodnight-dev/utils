@@ -213,6 +213,37 @@ if (delimiters.has(character)) { ... }
 - Rejected: doesn't solve the actual problem (classifying arbitrary punctuation)
   and is slower than the numeric check it would replace.
 
+## Benchmarks
+
+Evidence for the claims above — not a guarantee. Microbenchmarks are noisy and
+environment-specific; what these numbers substantiate is the _relative_ ordering
+of the candidates, which is the point. Regenerate with `pnpm bench` (Vitest +
+tinybench). The runnable candidates live in
+[`camel-case.alternatives.ts`](./camel-case.alternatives.ts), and their
+correctness is gated separately by
+[`camel-case.alternatives.test.ts`](./camel-case.alternatives.test.ts) — only
+implementations that match the chosen one across the corpus are eligible.
+
+Environment: Node 24.14.1, Apple M1 Max, macOS (arm64), 2026-06-21. Higher `hz`
+(operations per second over the shared input corpus) is better.
+
+| Implementation                       | hz (ops/s) |    RME | vs. chosen                  |
+| ------------------------------------ | ---------: | -----: | --------------------------- |
+| **chosen** (indexed, pre-sized)      |    120,465 | ±1.55% | —                           |
+| indexed, push (no pre-sized array)   |    103,827 | ±0.35% | chosen 1.16× faster         |
+| `for...of` (code-point, push)        |     64,755 | ±0.30% | chosen 1.86× faster         |
+| ASCII bitwise (**not** Unicode-safe) |    357,960 | ±0.34% | 2.97× faster — disqualified |
+
+Reading the table:
+
+- The two correct rivals confirm the rationale above: pre-sizing the output
+  array buys ~16% over `push` with otherwise identical logic, and the indexed
+  loop is ~1.9× the throughput of the more readable `for...of`.
+- The ASCII-bitwise variant is ~3× faster than the chosen implementation and is
+  **still rejected** — it drops every non-ASCII letter, so it fails parity. It
+  is in the table only to make the trade-off concrete: this library does not buy
+  speed with correctness (see alternative §4).
+
 ## Gotchas
 
 - **Behavior change from earlier drafts:** non-alphanumeric characters are now
