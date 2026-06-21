@@ -63,6 +63,40 @@ Sibling `.md` files live in `src/` and are **not published to npm** — only
 `dist/` ships (see each package's `files` field). They exist for the repository
 and its author.
 
+### 4. Every export tree-shakes
+
+A consumer who imports one utility must bundle only that utility — never its
+siblings. Three habits keep that true:
+
+- **One function per module**, re-exported from the barrel with a static
+  `export { fn } from './fn'`. The unit a bundler keeps or drops is a single
+  function.
+- **`"sideEffects": false`** on every package, and no top-level side effects in
+  any module. Watch for computed top-level values like `const TABLE = build()` —
+  wrap them in `/* @__PURE__ */` or compute lazily.
+- **Import siblings by file path, never through the barrel.** Inside a package
+  write `import { isNumber } from './is-number'`, not `from './index'` or the
+  package's own name. Routing internal reuse through the barrel couples your
+  module to everything the barrel re-exports; a direct path keeps the module
+  graph an acyclic set of leaves.
+
+A note on what actually does the shaking, because it is easy to over-credit
+`sideEffects: false`: tsdown bundles each leaf into a single `dist/index.mjs`,
+so esbuild and Rollup drop an unused function through ordinary statement-level
+dead-code elimination — independent of the flag. `sideEffects: false` earns its
+keep for **webpack** consumers (more conservative; it leans on the flag to prune
+across modules) and for any future multi-module package shape. Keep it
+everywhere; just know it is belt-and-suspenders for the current single-file
+leaves, not the load-bearing wall.
+
+What genuinely defeats shaking is **coupling** — one function calling another, a
+shared mutable top-level value, or a side-effecting barrel — because then the
+unused export can no longer be separated from the used one. That guarantee is
+enforced by a regression fixture
+([`packages/utils/src/tree-shaking.test.ts`](./packages/utils/src/tree-shaking.test.ts)):
+it bundles a single import from each entry point and asserts the other
+function's code is absent.
+
 ## Development
 
 This is a [pnpm](https://pnpm.io) workspace; Node `>=20` (see `.nvmrc`).
