@@ -117,13 +117,19 @@ Run `pnpm check` before opening a pull request.
 ## Adding a function
 
 1. Create `src/<name>.ts` with a thorough TSDoc comment (summary, `@param`,
-   `@returns`, `@example`).
-2. Implement it per §1 — safest and most performant, no regex unless justified.
-3. Add `src/<name>.test.ts` covering the edge cases (empty input, Unicode,
+   `@returns`, `@example`), implemented per §1 — safest and most performant, no
+   regex unless justified.
+2. Add `src/<name>.test.ts` covering the edge cases (empty input, Unicode,
    boundaries).
-4. Re-export it from the package's `src/index.ts`.
-5. If the implementation has interesting alternatives, add `src/<name>.md` (§3).
-6. Run `pnpm check`, then add a changeset: `pnpm changeset`.
+3. Re-export it from the package's `src/index.ts`. This is the step that makes
+   it importable, and the easiest to skip — `pnpm check` still passes without
+   it.
+4. Add it to the package's entry-point test (`src/index.test.ts`) so a forgotten
+   re-export fails the build instead of shipping.
+5. Add the function to the package's `README.md` API section (hand-maintained,
+   so a new export is invisible to consumers until you do).
+6. If the implementation has interesting alternatives, add `src/<name>.md` (§3).
+7. Run `pnpm check`, then add a changeset: `pnpm changeset`.
 
 For the full walkthrough — including adding a whole new package and cutting a
 release — see the [recipes](./docs/recipes/):
