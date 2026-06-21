@@ -9,9 +9,10 @@ principles are the point of the project.
 
 ### 1. The safest, most performant implementation wins
 
-Every function is implemented in the safest **and most performant** way the
-platform allows. We explicitly do **not** optimize for readability, cleverness,
-or functional-programming aesthetics.
+Every function is implemented in the safest **and fastest** way we can justify —
+where "fastest" means the quickest of the _correct_ alternatives we benchmarked,
+not an unmeasured boast. We explicitly do **not** optimize for readability,
+cleverness, or functional-programming aesthetics.
 
 - **Correctness first, then speed.** "Safe" means correct across the entire
   input domain — Unicode, empty values, boundary cases — and free of footguns.
@@ -22,8 +23,13 @@ or functional-programming aesthetics.
 - **Minimize allocations** and intermediate strings/arrays in hot paths.
 - **Lean on built-ins** (`String.prototype.*`, `Array.prototype.*`, `Math.*`)
   when they are as fast — and hand-roll a loop when it is measurably faster.
-- When two approaches are close, **measure**, then write down the reasoning in
-  the function's sibling doc (see §3).
+- When two approaches are close — or whenever the notes claim one is faster —
+  **measure it.** Check the alternatives in as runnable code, gate their
+  correctness with a parity test, and benchmark them; see
+  [ADR 0003](./docs/adr/0003-substantiating-performance-claims.md) and the
+  [benchmarking recipe](./docs/recipes/benchmarking-a-function.md). Record the
+  result, and the environment it was measured on, in the function's sibling doc
+  (§3).
 
 ### 2. Zero third-party runtime dependencies
 
