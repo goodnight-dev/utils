@@ -24,10 +24,11 @@ yarn add @goodnight-dev/string
 ## Usage
 
 ```ts
-import { camelCase, capitalize } from '@goodnight-dev/string';
+import { camelCase, capitalize, snakeCase } from '@goodnight-dev/string';
 
 capitalize('hELLO'); // => 'Hello'
 camelCase('foo-bar baz'); // => 'fooBarBaz'
+snakeCase('fooBar baz'); // => 'foo_bar_baz'
 ```
 
 The same utilities are available through the umbrella package, if you'd rather
@@ -53,6 +54,16 @@ for the alternatives considered and why this approach was chosen.
 
 Uppercases the first character and lowercases the rest. See the
 [implementation notes](https://github.com/goodnight-dev/utils/blob/main/packages/string/src/capitalize.md)
+for the alternatives considered and why this approach was chosen.
+
+### `snakeCase(value: string): string`
+
+Converts a string to snake_case: words are lowercased and joined with single
+underscores. Word boundaries are non-alphanumeric runs **and** camelHumps, so
+`snakeCase('fooBar')` is `'foo_bar'` and `snakeCase('XMLHttpRequest')` is
+`'xml_http_request'`. Unicode-correct, and the inverse of `camelCase` with hump
+splitting added. See the
+[implementation notes](https://github.com/goodnight-dev/utils/blob/main/packages/string/src/snake-case.md)
 for the alternatives considered and why this approach was chosen.
 
 ## License

@@ -6,7 +6,7 @@ import {
   camelCasePush,
 } from './camel-case.alternatives';
 import { camelCase } from './camel-case';
-import { CAMEL_CASE_INPUTS } from './camel-case.fixtures';
+import { STRING_INPUTS } from './string.fixtures';
 
 // Correctness is the gate, speed is the table. The chosen implementation is the
 // oracle: an alternative only earns a place in the benchmark if it produces
@@ -17,7 +17,7 @@ describe('camelCase alternatives', () => {
 
   for (const [name, fn] of Object.entries(correct)) {
     it(`${name} matches camelCase across the corpus`, () => {
-      for (const input of CAMEL_CASE_INPUTS) {
+      for (const input of STRING_INPUTS) {
         expect(fn(input), input).toBe(camelCase(input));
       }
     });

@@ -8,7 +8,11 @@ import * as api from './index';
 // This asserts the barrel itself, so a forgotten re-export fails `pnpm check`.
 describe('package entry point', () => {
   it('exports exactly the documented public surface', () => {
-    expect(Object.keys(api).sort()).toStrictEqual(['camelCase', 'capitalize']);
+    expect(Object.keys(api).sort()).toStrictEqual([
+      'camelCase',
+      'capitalize',
+      'snakeCase',
+    ]);
   });
 
   it('exports each member as a function', () => {
