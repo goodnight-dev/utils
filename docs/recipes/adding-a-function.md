@@ -6,6 +6,26 @@ How to add a new utility to an _existing_ package — for example, a new helper 
 
 Replace `string` / `capitalize` below with your area and function name.
 
+## Scaffold it with `pnpm new`
+
+```sh
+pnpm new            # pick "function", then answer the prompts
+```
+
+The generator ([`plopfile.ts`](../../plopfile.ts), templates in
+[`templates/`](../../templates/)) writes the files in steps 1–3 below from
+templates, and **wires up the barrel export (step 4) for you** — the one step
+that is a silent failure if forgotten (it shipped a broken `camelCase` in
+`0.2.0`). Answer yes to the benchmark prompt to also scaffold the harness from
+[Benchmarking a function](./benchmarking-a-function.md).
+
+What it deliberately leaves to you it marks with `TODO` comments: the
+implementation itself, the entry-point test, the README, and the changeset. The
+repo bans `todo`/`fixme` comments in ESLint, so **`pnpm check` stays red until
+you resolve every one** — the scaffold cannot be half-finished and still pass.
+The checklist below is therefore both the manual recipe and the description of
+what the generator hands you.
+
 ## Checklist
 
 Every step matters, but step 4 is the one that bites: a function can be written,
@@ -13,12 +33,14 @@ tested, documented, and released while still being **unreachable** by consumers,
 because nothing fails. Treat the barrel and the entry-point test as part of
 "done," not paperwork.
 
-- [ ] 1. Source file with thorough TSDoc — `src/<fn>.ts`
-- [ ] 2. Per-function tests — `src/<fn>.test.ts`
-- [ ] 3. (Optional) implementation notes — `src/<fn>.md`
-- [ ] 4. **Re-export from the barrel** — `src/index.ts` _(the step that makes it
-     importable; skipping it still passes `pnpm check`)_
-- [ ] 5. **Add it to the entry-point test** — `src/index.test.ts`
+- [ ] 1. Source file with thorough TSDoc — `src/<fn>.ts` _(scaffolded)_
+- [ ] 2. Per-function tests — `src/<fn>.test.ts` _(scaffolded)_
+- [ ] 3. (Optional) implementation notes — `src/<fn>.md` _(scaffolded)_
+- [ ] 4. **Re-export from the barrel** — `src/index.ts` _(done for you by
+     `pnpm new`; the step that makes it importable, and the one that still
+     passes `pnpm check` if skipped)_
+- [ ] 5. **Add it to the entry-point test** — `src/index.test.ts` _(fails until
+     you do: the auto-added export is now in the surface, so the test goes red)_
 - [ ] 6. Update the package's `README.md` API section
 - [ ] 7. `pnpm check`, then `pnpm changeset` (a new function is a `minor` bump)
 - [ ] 8. Conventional-commit + PR
@@ -81,8 +103,10 @@ an assertion — see [Benchmarking a function](./benchmarking-a-function.md).
 
 ## 4. Export it from the barrel
 
-Re-export from the package barrel `packages/string/src/index.ts`, kept in
-alphabetical order:
+`pnpm new` does this for you, inserting the line in alphabetical order — so this
+step is really "confirm it happened" unless you are working by hand. The barrel
+`packages/string/src/index.ts` is a sorted list of re-exports
+(`perfectionist/sort-exports` keeps it that way under `eslint --fix`):
 
 ```ts
 export { camelCase } from './camel-case';

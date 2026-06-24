@@ -9,18 +9,27 @@ is [`camel-case`](../../packages/string/src/camel-case.md#benchmarks).
 
 Replace `string` / `camelCase` below with your area and function name.
 
+> **Fast path:** `pnpm new` with "yes" to the benchmark prompt scaffolds steps
+> 1–4 — the shared corpus (only if the package doesn't have one yet), the
+> alternatives stub, the parity test, and the bench file. The steps below are
+> what it produces and how to fill them in.
+
 ## 1. A shared input corpus
 
-Create `packages/string/src/camel-case.fixtures.ts` exporting the inputs the
-parity test and the benchmark will both use, so they exercise the same workload.
-Cover the real domain (ASCII words, delimiters, Unicode, surrogate pairs) and
-include at least one longer string so you measure throughput, not just per-call
-overhead.
+The corpus is **per package**, not per function: one
+`packages/string/src/string.fixtures.ts` exporting `STRING_INPUTS`, used by
+every function's parity test and benchmark so they all exercise the same
+workload. `pnpm new` creates it on the first benchmarked function and leaves it
+alone afterwards — extend the existing array rather than adding a per-function
+file. Cover the real domain (ASCII words, delimiters, mixed casing, Unicode,
+surrogate pairs) and include at least one longer string so you measure
+throughput, not just per-call overhead.
 
 ```ts
-export const CAMEL_CASE_INPUTS = [
+export const STRING_INPUTS = [
   'hello world',
-  'foo_bar_baz',
+  'fooBar',
+  'XMLHttpRequest',
   'héllo wörld' /* … */,
 ];
 ```
@@ -42,7 +51,7 @@ candidate (kept for reference) _diverges_. This runs in `pnpm check`, so a
 fast-but-wrong alternative fails the build instead of sneaking into the table.
 
 ```ts
-for (const input of CAMEL_CASE_INPUTS) {
+for (const input of STRING_INPUTS) {
   expect(alternative(input), input).toBe(camelCase(input));
 }
 ```

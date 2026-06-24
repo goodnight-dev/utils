@@ -109,6 +109,7 @@ This is a [pnpm](https://pnpm.io) workspace; Node `>=20` (see `.nvmrc`).
 
 ```sh
 pnpm install        # install + link workspace packages
+pnpm new            # scaffold a new function (plop); see "Adding a function"
 pnpm build          # build every package (tsdown)
 pnpm test           # run the test suite (vitest)
 pnpm typecheck      # tsc --noEmit across packages
@@ -121,6 +122,11 @@ pnpm check          # everything above, in order
 Run `pnpm check` before opening a pull request.
 
 ## Adding a function
+
+Run `pnpm new` to scaffold the files below from templates; it also adds the
+barrel re-export (step 3) for you. Everything it leaves to you is marked with a
+`TODO` comment, and `todo`/`fixme` comments are banned by ESLint, so
+`pnpm check` stays red until the function is fully wired up. The steps:
 
 1. Create `src/<name>.ts` with a thorough TSDoc comment (summary, `@param`,
    `@returns`, `@example`), implemented per §1 — safest and most performant, no

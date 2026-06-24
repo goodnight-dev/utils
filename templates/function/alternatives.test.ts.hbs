@@ -1,0 +1,23 @@
+import { describe, expect, it } from 'vitest';
+
+import { {{name}}Alternative } from './{{dashCase name}}.alternatives';
+import { {{name}} } from './{{dashCase name}}';
+import { {{constantCase pkg}}_INPUTS } from './{{dashCase pkg}}.fixtures';
+
+// Correctness is the gate, speed is the table. The chosen implementation is the
+// oracle: an alternative only earns a place in the benchmark if it produces
+// identical output across the whole corpus.
+describe('{{name}} alternatives', () => {
+  // TODO: list only the alternatives meant to be correct here; a deliberately
+  // fast-but-wrong variant gets its own disqualifying assertion instead — see
+  // camel-case.alternatives.test.ts.
+  const correct = { {{name}}Alternative };
+
+  for (const [name, fn] of Object.entries(correct)) {
+    it(`${name} matches {{name}} across the corpus`, () => {
+      for (const input of {{constantCase pkg}}_INPUTS) {
+        expect(fn(input), input).toBe({{name}}(input));
+      }
+    });
+  }
+});
