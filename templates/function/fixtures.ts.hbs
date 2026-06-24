@@ -1,0 +1,10 @@
+// Shared input corpus for the {{dashCase pkg}} package's parity checks and
+// benchmarks. Repo-only: not re-exported from the barrel, so it never reaches
+// `dist`. One corpus per package so every function is measured on the same
+// inputs; split it back out only if a function genuinely needs different shapes.
+
+export const {{constantCase pkg}}_INPUTS = [
+  // TODO: a representative corpus — typical inputs, the edge cases (empty-ish,
+  // Unicode, mixed casing and delimiters), and a long string for throughput.
+  '',
+];

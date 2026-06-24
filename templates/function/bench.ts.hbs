@@ -1,0 +1,27 @@
+import { bench, describe } from 'vitest';
+
+import { {{name}}Alternative } from './{{dashCase name}}.alternatives';
+import { {{name}} } from './{{dashCase name}}';
+import { {{constantCase pkg}}_INPUTS } from './{{dashCase pkg}}.fixtures';
+
+// Evidence for the claims in {{dashCase name}}.md. Run with `pnpm bench`. Not a
+// CI gate — microbenchmarks are too noisy — just reproducible evidence,
+// snapshotted into the notes with an environment stamp. Correctness is enforced
+// separately by {{dashCase name}}.alternatives.test.ts.
+
+function run(fn: (value: string) => string): void {
+  for (const input of {{constantCase pkg}}_INPUTS) {
+    fn(input);
+  }
+}
+
+describe('{{name}}', () => {
+  bench('{{name}} (chosen)', () => {
+    run({{name}});
+  });
+
+  // TODO: add a `bench(...)` per alternative you want to compare against.
+  bench('{{name}}Alternative', () => {
+    run({{name}}Alternative);
+  });
+});

@@ -1,0 +1,16 @@
+// Rejected {{name}} implementations, kept runnable so the benchmark can
+// substantiate the claims in `{{dashCase name}}.md` and the parity test can
+// prove which ones are actually correct. Repo-only: never re-exported from the
+// barrel, never shipped in `dist`. The chosen implementation lives in
+// `{{dashCase name}}.ts` and is the single source of truth; these exist only
+// for comparison.
+
+/**
+ * TODO: a rejected alternative, kept runnable for the benchmark. Name it after
+ * the approach (e.g. `{{name}}ForOf`, `{{name}}Regex`) and document in
+ * `{{dashCase name}}.md` why it lost. Add as many as you benchmarked.
+ */
+export function {{name}}Alternative(value: string): string {
+  // TODO: implement the alternative approach.
+  throw new Error('{{name}}Alternative is not implemented yet');
+}
