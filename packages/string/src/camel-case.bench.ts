@@ -6,7 +6,7 @@ import {
   camelCasePush,
 } from './camel-case.alternatives';
 import { camelCase } from './camel-case';
-import { CAMEL_CASE_INPUTS } from './camel-case.fixtures';
+import { STRING_INPUTS } from './string.fixtures';
 
 // Evidence for the claims in camel-case.md. Run with `pnpm bench`. These
 // numbers are not a CI gate — microbenchmarks are too noisy to fail a build on
@@ -15,7 +15,7 @@ import { CAMEL_CASE_INPUTS } from './camel-case.fixtures';
 // camel-case.alternatives.test.ts.
 
 function run(fn: (value: string) => string): void {
-  for (const input of CAMEL_CASE_INPUTS) {
+  for (const input of STRING_INPUTS) {
     fn(input);
   }
 }
