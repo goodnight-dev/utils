@@ -7,6 +7,28 @@ The repo's structure: each leaf package is standalone and independently
 versioned; the umbrella `@goodnight-dev/utils` re-exports them so consumers can
 import the whole suite or by subpath.
 
+## Scaffold with `pnpm new`
+
+```sh
+pnpm new            # pick "package", then answer the prompts
+```
+
+The `package` generator does the mechanical parts of steps 1–4 below: it writes
+the leaf's files from `templates/package/`, wires the package into the umbrella
+(runtime dependency, `./<area>` export subpath, tsdown entry, barrel re-export)
+and the TypeDoc entry points, and — because a package is rarely useful empty —
+offers to roll straight into [Adding a function](./adding-a-function.md) for the
+first function. Then finish with:
+
+```sh
+pnpm install        # link the new workspace package
+pnpm check          # format, lint, build, typecheck, test, package exports
+pnpm changeset      # select the new package
+```
+
+The numbered sections below are the manual reference for what the generator
+produces — follow them by hand only when not using `pnpm new`.
+
 ## 1. Scaffold the package
 
 Create `packages/array/` with these files.
@@ -129,6 +151,11 @@ And create `packages/array/typedoc.json`:
   "entryPoints": ["src/index.ts"]
 }
 ```
+
+Finally, add a row for the package to the two hand-maintained tables: the
+`## Packages` table in the root `README.md` and the `## Subpaths` table in
+`packages/utils/README.md`. (The `pnpm new` generator does not touch these —
+like the per-package README API sections, they are prose the author maintains.)
 
 ## 5. Add a first function
 
