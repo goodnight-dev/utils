@@ -1,20 +1,21 @@
 {
-  "name": "@goodnight-dev/utils",
-  "version": "0.2.2",
-  "description": "The complete @goodnight-dev utility suite — import everything or by subpath.",
+  "name": "@goodnight-dev/predicate",
+  "version": "0.0.0",
+  "description": "Runtime type and value predicates (is*) — part of the @goodnight-dev utility suite.",
   "keywords": [
     "utils",
+    "predicate",
     "typescript",
     "esm",
     "tree-shakable"
   ],
   "license": "MIT",
   "author": "Ian Goodnight",
-  "homepage": "https://github.com/goodnight-dev/utils#readme",
+  "homepage": "https://github.com/goodnight-dev/utils/tree/main/packages/predicate#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/goodnight-dev/utils.git",
-    "directory": "packages/utils"
+    "directory": "packages/predicate"
   },
   "bugs": {
     "url": "https://github.com/goodnight-dev/utils/issues"
@@ -25,14 +26,6 @@
     ".": {
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
-    },
-    "./predicate": {
-      "types": "./dist/predicate.d.mts",
-      "import": "./dist/predicate.mjs"
-    },
-    "./string": {
-      "types": "./dist/string.d.mts",
-      "import": "./dist/string.mjs"
     },
     "./package.json": "./package.json"
   },
@@ -47,10 +40,6 @@
   },
   "scripts": {
     "build": "tsdown"
-  },
-  "dependencies": {
-    "@goodnight-dev/predicate": "workspace:*",
-    "@goodnight-dev/string": "workspace:*"
   },
   "devDependencies": {
     "tsdown": "^0.22.3",

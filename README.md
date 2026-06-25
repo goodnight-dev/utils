@@ -38,10 +38,11 @@ All three are fully typed, ESM-only, and tree-shakable.
 
 ## Packages
 
-| Package                 | Description      |
-| ----------------------- | ---------------- |
-| `@goodnight-dev/utils`  | Umbrella package |
-| `@goodnight-dev/string` | String utilities |
+| Package                    | Description                       |
+| -------------------------- | --------------------------------- |
+| `@goodnight-dev/utils`     | Umbrella package                  |
+| `@goodnight-dev/predicate` | Type and value predicates (`is*`) |
+| `@goodnight-dev/string`    | String utilities                  |
 
 ## Project goals
 

@@ -28,10 +28,11 @@ directly (e.g.
 
 ## Subpaths
 
-| Import                        | Re-exports              |
-| ----------------------------- | ----------------------- |
-| `@goodnight-dev/utils`        | everything below        |
-| `@goodnight-dev/utils/string` | `@goodnight-dev/string` |
+| Import                           | Re-exports                 |
+| -------------------------------- | -------------------------- |
+| `@goodnight-dev/utils`           | everything below           |
+| `@goodnight-dev/utils/predicate` | `@goodnight-dev/predicate` |
+| `@goodnight-dev/utils/string`    | `@goodnight-dev/string`    |
 
 ## License
 

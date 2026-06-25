@@ -1,7 +1,7 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "entryPointStrategy": "packages",
-  "entryPoints": ["packages/string"],
+  "entryPoints": ["packages/predicate", "packages/string"],
   "out": "docs/api",
   "name": "@goodnight-dev/utils",
   "includeVersion": false,

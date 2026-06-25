@@ -45,6 +45,7 @@ async function bundleNamedImport(
 // mistaken for the `capitalize` function being present.
 const CAPITALIZE_FN = /\bcapitalize\b/;
 const CAMEL_CASE_FN = /\bcamelCase\b/;
+const IS_ASCII_STRING_FN = /\bisAsciiString\b/;
 // Internal sentinels unique to one function, as a second, independent check.
 const CAPITALIZE_INTERNAL = 'slice(1)';
 const CAMEL_CASE_INTERNAL = 'UNICODE_ALPHANUMERIC_REGEX';
@@ -81,4 +82,41 @@ describe('tree-shaking', () => {
       expect(bundle).not.toContain(CAPITALIZE_INTERNAL);
     });
   }
+});
+
+// Cross-package: importing one leaf's function through the umbrella must not drag
+// in another leaf. This is the guarantee that lets the umbrella re-export every
+// package without coupling them — the leaves stay independently shakable even
+// when consumed as one dependency.
+describe('tree-shaking across packages', () => {
+  const crossPackage = [
+    { label: 'predicate leaf', specifier: '@goodnight-dev/predicate' },
+    {
+      label: 'umbrella subpath (@goodnight-dev/utils/predicate)',
+      specifier: '@goodnight-dev/utils/predicate',
+    },
+    {
+      label: 'umbrella barrel (@goodnight-dev/utils)',
+      specifier: '@goodnight-dev/utils',
+    },
+  ];
+
+  for (const { label, specifier } of crossPackage) {
+    it(`${label}: importing isAsciiString excludes the string package`, async () => {
+      const bundle = await bundleNamedImport(specifier, 'isAsciiString');
+
+      expect(bundle).toMatch(IS_ASCII_STRING_FN);
+      expect(bundle).not.toMatch(CAMEL_CASE_FN);
+      expect(bundle).not.toMatch(CAPITALIZE_FN);
+      expect(bundle).not.toContain(CAMEL_CASE_INTERNAL);
+      expect(bundle).not.toContain(CAPITALIZE_INTERNAL);
+    });
+  }
+
+  it('umbrella barrel: importing camelCase excludes the predicate package', async () => {
+    const bundle = await bundleNamedImport('@goodnight-dev/utils', 'camelCase');
+
+    expect(bundle).toMatch(CAMEL_CASE_FN);
+    expect(bundle).not.toMatch(IS_ASCII_STRING_FN);
+  });
 });
