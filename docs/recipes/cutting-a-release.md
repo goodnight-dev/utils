@@ -25,7 +25,9 @@ Releases are automated with
    than `changeset publish` — `changeset publish` doesn't drive npm's OIDC
    handshake. The script packs each package with `pnpm pack` (which resolves the
    `workspace:` protocol) and runs `npm publish` on the tarball, which performs
-   the OIDC auth and provenance. See
+   the OIDC auth and provenance. It then tags each published version
+   (`name@version`) and opens a matching **GitHub Release** with notes taken
+   from that package's `CHANGELOG.md`. See
    [ADR 0002](../adr/0002-oidc-trusted-publishing.md).
 
 In the normal flow you never run `npm publish` by hand.
