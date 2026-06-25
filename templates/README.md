@@ -7,8 +7,13 @@ the repo root:
 pnpm new            # pick a generator, then answer the prompts
 ```
 
-See [Adding a function](../docs/recipes/adding-a-function.md) for the full
-workflow these templates fit into.
+Two generators:
+
+- **`function`** — adds a function to an existing leaf package. See
+  [Adding a function](../docs/recipes/adding-a-function.md).
+- **`package`** — scaffolds a new leaf package, wires it into the umbrella and
+  TypeDoc, and optionally rolls straight into the `function` generator for a
+  first function. See [Adding a package](../docs/recipes/adding-a-package.md).
 
 ## Layout
 
@@ -22,6 +27,15 @@ templates/
     alternatives.ts.hbs        │ the optional benchmark harness
     alternatives.test.ts.hbs   │ (only emitted if you answer yes)
     bench.ts.hbs               ┘
+  package/             ← a new leaf package + its umbrella subpath module
+    package.json.hbs  tsconfig.json.hbs  tsdown.config.ts.hbs  typedoc.json.hbs
+    README.md.hbs  LICENSE.hbs  index.ts.hbs  index.test.ts.hbs
+    umbrella-subpath.ts.hbs
+  predicate/           ← override: predicate functions are (value: T) => boolean
+    source.ts.hbs
+    test.ts.hbs
+    alternatives.ts.hbs
+    bench.ts.hbs
 ```
 
 Templates are [Handlebars](https://handlebarsjs.com); `{{name}}` is the function
@@ -41,22 +55,24 @@ The generator resolves each template per-run: for a target package in
 `templates/function/<file>`. So the `function/` set is the default, and any
 package can override individual templates without touching the others.
 
-The defaults are string-shaped — `(value: string): string`. When a package
-needs a different shape, add an override directory rather than editing the
-defaults. For example, a future `predicate` package whose functions are
-`(value: unknown): boolean` would add:
+The defaults are string-shaped — `(value: string): string`. When a package needs
+a different shape, add an override directory rather than editing the defaults.
+The `predicate/` set is the worked example: its functions are
+`(value: T): boolean`, so it overrides `source.ts.hbs`, `test.ts.hbs`,
+`alternatives.ts.hbs`, and `bench.ts.hbs` (boolean return, input type `T`), while
+`notes.md.hbs`, `fixtures.ts.hbs`, and `alternatives.test.ts.hbs` fall through to
+`function/`.
 
-```
-templates/
-  predicate/
-    source.ts.hbs      ← (value: unknown): boolean
-    test.ts.hbs        ← truthy/falsy assertions
-    # notes.md.hbs, the benchmark harness, etc. fall through to function/
-```
+The input type `T` comes from a prompt: a package whose `templates/<dir>/` has a
+`source.ts.hbs` override is treated as "typed," so `pnpm new` asks "Input type
+the function takes" (default `string`) and the predicate templates interpolate it
+as `{{inputType}}`. String-shaped packages have no override and are never asked.
 
 Only the files that genuinely differ need an override; everything else keeps
-falling back to `function/`. Keep that fallback in mind — a generic template
-edit changes every package that has not overridden it.
+falling back to `function/`. Keep that fallback in mind — a generic template edit
+changes every package that has not overridden it, and the benchmark-harness
+templates in `function/` still return `string`, so a future benchmarked predicate
+function would add its own `alternatives.ts.hbs` / `bench.ts.hbs` overrides.
 
 ## Why the output is full of TODOs
 

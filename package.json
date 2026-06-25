@@ -16,7 +16,7 @@
     "build": "pnpm -r build",
     "docs:build": "typedoc",
     "docs:watch": "typedoc --watch",
-    "typecheck": "pnpm -r exec tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.json && pnpm -r exec tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",

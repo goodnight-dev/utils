@@ -1,0 +1,29 @@
+{
+  "name": "@goodnight-dev/{{dashCase pkg}}",
+  "version": "0.0.0",
+  "description": "{{{description}}}",
+  "keywords": ["utils", "{{dashCase pkg}}", "typescript", "esm", "tree-shakable"],
+  "license": "MIT",
+  "author": "Ian Goodnight",
+  "homepage": "https://github.com/goodnight-dev/utils/tree/main/packages/{{dashCase pkg}}#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/goodnight-dev/utils.git",
+    "directory": "packages/{{dashCase pkg}}"
+  },
+  "bugs": { "url": "https://github.com/goodnight-dev/utils/issues" },
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": { "types": "./dist/index.d.mts", "import": "./dist/index.mjs" },
+    "./package.json": "./package.json"
+  },
+  "files": ["dist"],
+  "engines": { "node": ">=20" },
+  "publishConfig": { "access": "public" },
+  "scripts": { "build": "tsdown" },
+  "devDependencies": {
+    "tsdown": "^0.22.3",
+    "typescript": "^6.0.3"
+  }
+}

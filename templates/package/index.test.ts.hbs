@@ -1,0 +1,18 @@
+import { describe, expect, it } from 'vitest';
+
+import * as api from './index';
+
+// Guards the package's public surface. A function that is implemented and tested
+// but never re-exported from the barrel would still pass its own test — and ship
+// unreachable. Asserting the barrel here makes a forgotten re-export fail.
+describe('package entry point', () => {
+  it('exports exactly the documented public surface', () => {
+    expect(Object.keys(api).sort()).toStrictEqual([{{#if name}}'{{name}}'{{/if}}]);
+  });
+
+  it('exports each member as a function', () => {
+    for (const name of Object.keys(api)) {
+      expect(typeof api[name as keyof typeof api]).toBe('function');
+    }
+  });
+});

@@ -143,6 +143,10 @@ barrel re-export (step 3) for you. Everything it leaves to you is marked with a
 6. If the implementation has interesting alternatives, add `src/<name>.md` (§3).
 7. Run `pnpm check`, then add a changeset: `pnpm changeset`.
 
+To start a whole new area package, run `pnpm new` and pick the `package`
+generator: it scaffolds the leaf, wires it into the umbrella, and can roll
+straight into the first function.
+
 For the full walkthrough — including adding a whole new package and cutting a
 release — see the [recipes](./docs/recipes/):
 
