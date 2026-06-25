@@ -1,2 +1,1 @@
 export * from '@goodnight-dev/predicate';
-export * from '@goodnight-dev/string';

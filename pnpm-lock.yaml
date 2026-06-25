@@ -72,6 +72,15 @@ importers:
         specifier: ^4.1.9
         version: 4.1.9(@types/node@25.9.3)(@vitest/coverage-v8@4.1.9)(vite@8.0.16(@types/node@25.9.3)(esbuild@0.28.1)(jiti@2.6.1)(yaml@2.9.0))
 
+  packages/predicate:
+    devDependencies:
+      tsdown:
+        specifier: ^0.22.3
+        version: 0.22.3(@arethetypeswrong/core@0.18.3)(publint@0.3.21)(typescript@6.0.3)(unrun@0.3.1)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
   packages/string:
     devDependencies:
       tsdown:
@@ -83,6 +92,9 @@ importers:
 
   packages/utils:
     dependencies:
+      '@goodnight-dev/predicate':
+        specifier: workspace:*
+        version: link:../predicate
       '@goodnight-dev/string':
         specifier: workspace:*
         version: link:../string
