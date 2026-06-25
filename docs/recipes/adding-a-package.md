@@ -170,3 +170,19 @@ pnpm changeset    # select the new package; the umbrella is bumped automatically
 ```
 
 Then commit (`feat(array): add the array package`) and open a PR.
+
+## 7. First publish to npm (one-time)
+
+A brand-new package needs two one-time steps on npm that existing packages
+already have — CI's OIDC publish **cannot create a package that does not exist
+yet**, so the first release will not work until these are done:
+
+1. **Bootstrap publish** to create the package on npm:
+   `pnpm --filter @goodnight-dev/array publish --access public`.
+2. **Configure its Trusted Publisher** on npmjs.com so the `Release` workflow
+   can publish it over OIDC afterwards.
+
+Both are covered in detail in
+[Cutting a release → One-time setup](./cutting-a-release.md#one-time-setup) (§b
+and §c). After that, the package releases automatically through the normal
+Changesets flow like every other package.
