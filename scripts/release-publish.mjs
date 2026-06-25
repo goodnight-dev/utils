@@ -8,8 +8,9 @@
 //   dependencies, and `npm publish <tarball>` performs the OIDC auth +
 //   provenance attestation.
 //
-// Packages publish in dependency order (a dependency before its dependents),
-// and each newly published version gets a `name@version` git tag.
+// Packages publish in dependency order (a dependency before its dependents), and
+// each newly published version gets a `name@version` git tag and a matching
+// GitHub Release whose notes come from the package's changelog.
 //
 // See docs/adr/0002-oidc-trusted-publishing.md.
 
@@ -27,6 +28,27 @@ const run = (command, args, options = {}) =>
 const readManifest = (dir) =>
   JSON.parse(readFileSync(join(PACKAGES_DIR, dir, 'package.json'), 'utf8'));
 
+// Pull the changelog section for a version (everything under `## <version>` up
+// to the next `## ` heading), to use as GitHub Release notes.
+const changelogNotes = (dir, version) => {
+  const path = join(PACKAGES_DIR, dir, 'CHANGELOG.md');
+  if (!existsSync(path)) return '';
+  const lines = readFileSync(path, 'utf8').split('\n');
+  const start = lines.findIndex((line) => line.trim() === `## ${version}`);
+  if (start === -1) return '';
+  let end = lines.length;
+  for (let i = start + 1; i < lines.length; i++) {
+    if (lines[i].startsWith('## ')) {
+      end = i;
+      break;
+    }
+  }
+  return lines
+    .slice(start + 1, end)
+    .join('\n')
+    .trim();
+};
+
 // Collect non-private workspace packages and their internal (@scope) deps.
 const packages = new Map();
 for (const dir of readdirSync(PACKAGES_DIR)) {
@@ -36,6 +58,7 @@ for (const dir of readdirSync(PACKAGES_DIR)) {
   packages.set(manifest.name, {
     name: manifest.name,
     version: manifest.version,
+    dir,
     deps: Object.keys(manifest.dependencies ?? {}).filter((dep) =>
       dep.startsWith(SCOPE),
     ),
@@ -67,10 +90,10 @@ const isPublished = (name, version) => {
 };
 
 const tmp = mkdtempSync(join(tmpdir(), 'release-'));
-let publishedAny = false;
+const published = [];
 
 for (const name of ordered) {
-  const { version } = packages.get(name);
+  const { version, dir } = packages.get(name);
   if (isPublished(name, version)) {
     console.log(`${name}@${version} already on npm — skipping`);
     continue;
@@ -97,11 +120,35 @@ for (const name of ordered) {
 
   run('git', ['tag', `${name}@${version}`]);
   console.log(`published and tagged ${name}@${version}`);
-  publishedAny = true;
+  published.push({ name, version, dir });
 }
 
-if (publishedAny) {
-  run('git', ['push', '--tags'], { stdio: 'inherit' });
-} else {
+if (published.length === 0) {
   console.log('Nothing to publish.');
+} else {
+  run('git', ['push', '--tags'], { stdio: 'inherit' });
+
+  // Mirror each published version as a GitHub Release. Non-fatal: the package is
+  // already on npm, so a Release-page failure must not fail the run. `--latest`
+  // is off because no single package version is "the latest" of the monorepo.
+  for (const { name, version, dir } of published) {
+    const tag = `${name}@${version}`;
+    try {
+      run('gh', [
+        'release',
+        'create',
+        tag,
+        '--title',
+        tag,
+        '--notes',
+        changelogNotes(dir, version) || tag,
+        '--latest=false',
+      ]);
+      console.log(`created GitHub release ${tag}`);
+    } catch (error) {
+      console.warn(
+        `WARN: could not create GitHub release ${tag}: ${error.stderr ?? error.message}`,
+      );
+    }
+  }
 }
