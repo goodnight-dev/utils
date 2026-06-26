@@ -29,6 +29,17 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # Dependabot sometimes writes a GitHub Packages tarball URL into the
+      # lockfile for a newly-added package; pnpm then 401s fetching it here (CI
+      # has no Packages auth). Fail fast with a pointer instead of a cryptic
+      # ERR_PNPM_FETCH_401. See docs/recipes/troubleshooting-dependency-updates.md.
+      - name: Guard against GitHub Packages tarball URLs in the lockfile
+        run: |
+          if grep -n 'npm.pkg.github.com' pnpm-lock.yaml; then
+            echo "::error file=pnpm-lock.yaml::Lockfile references npm.pkg.github.com, which breaks 'pnpm install --frozen-lockfile' (401). See docs/recipes/troubleshooting-dependency-updates.md"
+            exit 1
+          fi
+
       - name: Install pnpm
         uses: pnpm/action-setup@v6
 
