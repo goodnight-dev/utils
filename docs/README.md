@@ -7,6 +7,7 @@
   - [Adding a package](./recipes/adding-a-package.md)
   - [Benchmarking a function](./recipes/benchmarking-a-function.md)
   - [Cutting a release](./recipes/cutting-a-release.md)
+  - [Troubleshooting dependency-update CI failures](./recipes/troubleshooting-dependency-updates.md)
 - **[Architecture Decision Records](./adr/)** — the "why" behind significant
   technical choices.
   - [0001 — Versioning and commit conventions](./adr/0001-versioning-and-commit-conventions.md)
