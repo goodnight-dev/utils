@@ -72,7 +72,7 @@ This repo is opinionated about _how_ the code is written. See
 
 ## Development
 
-This is a [pnpm](https://pnpm.io) workspace. Requires Node `>=20`.
+This is a [pnpm](https://pnpm.io) workspace. Requires Node `>=22`.
 
 ```sh
 pnpm install        # install + link workspace packages
