@@ -1,2 +1,9 @@
 packages:
   - 'packages/*'
+
+# esbuild and lefthook need to run install scripts (esbuild fetches its platform
+# binary; lefthook installs the git hooks). pnpm blocks dependency build scripts
+# by default, so allow these explicitly.
+allowBuilds:
+  esbuild: true
+  lefthook: true
