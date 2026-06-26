@@ -1,6 +1,6 @@
 {
   "name": "@goodnight-dev/predicate",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Runtime type and value predicates (is*) — part of the @goodnight-dev utility suite.",
   "keywords": [
     "utils",
