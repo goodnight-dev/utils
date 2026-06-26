@@ -1,5 +1,13 @@
 # @goodnight-dev/string
 
+## 0.4.0
+
+### Minor Changes
+
+- 7ce9822: Raise the minimum supported Node.js to `>=22`. Node 20 reached
+  end-of-life on 2026-04-30, so these packages are now built and tested only on
+  Node 22, 24, and 26.
+
 ## 0.3.0
 
 ### Minor Changes
