@@ -6,6 +6,7 @@
   - [Adding a function](./recipes/adding-a-function.md)
   - [Adding a package](./recipes/adding-a-package.md)
   - [Benchmarking a function](./recipes/benchmarking-a-function.md)
+  - [Changing the Node.js version matrix](./recipes/changing-the-node-version-matrix.md)
   - [Cutting a release](./recipes/cutting-a-release.md)
   - [Troubleshooting dependency-update CI failures](./recipes/troubleshooting-dependency-updates.md)
 - **[Architecture Decision Records](./adr/)** — the "why" behind significant
