@@ -37,10 +37,11 @@ because nothing fails. Treat the barrel and the entry-point test as part of
 - [ ] 2. Per-function tests — `src/<fn>.test.ts` _(scaffolded)_
 - [ ] 3. (Optional) implementation notes — `src/<fn>.md` _(scaffolded)_
 - [ ] 4. **Re-export from the barrel** — `src/index.ts` _(done for you by
-     `pnpm new`; the step that makes it importable, and the one that still
-     passes `pnpm check` if skipped)_
+      `pnpm new`; the step that makes it importable, and the one that still
+      passes `pnpm check` if skipped)_
 - [ ] 5. **Add it to the entry-point test** — `src/index.test.ts` _(fails until
-     you do: the auto-added export is now in the surface, so the test goes red)_
+      you do: the auto-added export is now in the surface, so the test goes
+      red)_
 - [ ] 6. Update the package's `README.md` API section
 - [ ] 7. `pnpm check`, then `pnpm changeset` (a new function is a `minor` bump)
 - [ ] 8. Conventional-commit + PR
