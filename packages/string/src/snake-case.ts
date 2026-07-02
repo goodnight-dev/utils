@@ -57,9 +57,11 @@ export function snakeCase(value: string): string {
 
     if (code < 128) {
       const upper = code >= 65 && code <= 90;
-      if (
-        !(upper || (code >= 97 && code <= 122) || (code >= 48 && code <= 57))
-      ) {
+      if (!(
+        upper ||
+        (code >= 97 && code <= 122) ||
+        (code >= 48 && code <= 57)
+      )) {
         pendingSeparator = started;
         i++;
         continue;
