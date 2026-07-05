@@ -4,7 +4,10 @@ import * as api from './index';
 
 describe('package entry point', () => {
   it('exports exactly the documented public surface', () => {
-    expect(Object.keys(api).sort()).toStrictEqual(['isAsciiString']);
+    expect(Object.keys(api).sort()).toStrictEqual([
+      'isAsciiString',
+      'isIterable',
+    ]);
   });
 
   it('exports each member as a function', () => {

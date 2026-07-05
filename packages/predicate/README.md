@@ -46,6 +46,15 @@ Returns `true` if every character in the string is ASCII (U+0000–U+007F),
 [implementation notes](https://github.com/goodnight-dev/utils/blob/main/packages/predicate/src/is-ascii-string.md)
 for the alternatives considered and why this approach was chosen.
 
+### `isIterable(value: unknown): boolean`
+
+Returns `true` if the value implements the iterable protocol (a callable
+`Symbol.iterator`), so it can drive a `for...of` loop or the spread operator —
+`true` for arrays, strings, `Map`, `Set`, and generator objects; `false` for
+plain objects, `null`, and `undefined`. See the
+[implementation notes](https://github.com/goodnight-dev/utils/blob/main/packages/predicate/src/is-iterable.md)
+for the alternatives considered and why this approach was chosen.
+
 ## License
 
 [MIT](./LICENSE) © Ian Goodnight
