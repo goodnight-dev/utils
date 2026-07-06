@@ -1,5 +1,13 @@
 # @goodnight-dev/predicate
 
+## 0.4.0
+
+### Minor Changes
+
+- c3a7f99: `isIterable` is now a type guard: it narrows a `true` result to
+  `Iterable<unknown>`, so callers can spread the value or drive it with
+  `for...of` without a cast. Runtime behaviour is unchanged.
+
 ## 0.3.0
 
 ### Minor Changes
