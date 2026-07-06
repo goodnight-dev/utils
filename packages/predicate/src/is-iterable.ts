@@ -5,7 +5,9 @@
  * arrays, `Map`, `Set`, typed arrays, and generator objects.
  *
  * @param value - The value to test for iterability.
- * @returns `true` when the value is iterable; `false` otherwise.
+ * @returns `true` when the value is iterable; `false` otherwise. As a type
+ * guard, a `true` result narrows `value` to `Iterable<unknown>`, so it can be
+ * spread or driven with `for...of` without a cast.
  *
  * @example
  * ```ts
@@ -19,7 +21,7 @@
  * isIterable(undefined) // => false
  * ```
  */
-export function isIterable(value: unknown): boolean {
+export function isIterable(value: unknown): value is Iterable<unknown> {
   return (
     value !== null &&
     value !== undefined &&

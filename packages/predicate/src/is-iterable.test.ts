@@ -24,4 +24,14 @@ describe('isIterable', () => {
     expect(isIterable(42)).toBe(false);
     expect(isIterable(true)).toBe(false);
   });
+
+  it('narrows the value to Iterable<unknown> when it returns true', () => {
+    const value: unknown = new Set([1, 2, 3]);
+    expect(isIterable(value)).toBe(true);
+    if (isIterable(value)) {
+      // Compiles only because `value` is narrowed to Iterable<unknown>;
+      // spreading an `unknown` would be a type error.
+      expect([...value]).toHaveLength(3);
+    }
+  });
 });
