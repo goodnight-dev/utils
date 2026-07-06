@@ -1,5 +1,12 @@
 # @goodnight-dev/utils
 
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies [c3a7f99]
+  - @goodnight-dev/predicate@0.4.0
+
 ## 0.4.1
 
 ### Patch Changes

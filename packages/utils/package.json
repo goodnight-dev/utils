@@ -1,6 +1,6 @@
 {
   "name": "@goodnight-dev/utils",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "The complete @goodnight-dev utility suite — import everything or by subpath.",
   "keywords": [
     "utils",
