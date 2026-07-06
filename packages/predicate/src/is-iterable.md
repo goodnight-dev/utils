@@ -8,7 +8,7 @@
 ## Chosen implementation
 
 ```ts
-export function isIterable(value: unknown): boolean {
+export function isIterable(value: unknown): value is Iterable<unknown> {
   return (
     value !== null &&
     value !== undefined &&
@@ -17,6 +17,12 @@ export function isIterable(value: unknown): boolean {
   );
 }
 ```
+
+It is a **type guard** (`value is Iterable<unknown>`), not a plain `boolean`
+predicate: a `true` result narrows the value at the call site, so it can be
+spread or driven with `for...of` without a cast. That is the whole point of a
+predicate that takes `unknown` — `isAsciiString` returns `boolean` because it
+already has a `string` and there is nothing to narrow.
 
 The iterable protocol is defined by one thing: a callable `Symbol.iterator`. So
 the most direct question — "is `value[Symbol.iterator]` a function?" — is also
