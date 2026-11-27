@@ -55,6 +55,14 @@ plain objects, `null`, and `undefined`. See the
 [implementation notes](https://github.com/goodnight-dev/utils/blob/main/packages/predicate/src/is-iterable.md)
 for the alternatives considered and why this approach was chosen.
 
+### `isRecord(value: unknown): boolean`
+
+Returns `true` if the value is a plain object (a "record") — that is, an object
+with a prototype of `null` or `Object.prototype`. Returns `false` for arrays,
+functions, `null`, and any object with a custom prototype. See the
+[implementation notes](https://github.com/goodnight-dev/utils/blob/main/packages/predicate/src/is-record.md)
+for the alternatives considered and why this approach was chosen.
+
 ## License
 
 [MIT](./LICENSE) © Ian Goodnight
