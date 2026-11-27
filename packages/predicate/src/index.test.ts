@@ -7,6 +7,7 @@ describe('package entry point', () => {
     expect(Object.keys(api).sort()).toStrictEqual([
       'isAsciiString',
       'isIterable',
+      'isRecord',
     ]);
   });
 

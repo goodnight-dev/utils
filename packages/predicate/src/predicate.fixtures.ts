@@ -43,3 +43,31 @@ export const ITERABLE_INPUTS: readonly unknown[] = [
   null, // not iterable
   undefined, // not iterable
 ];
+
+// Mixed-type corpus for `isRecord`, which takes `unknown` rather than a string.
+// It deliberately spans record and non-record values of both object and
+// primitive types. The discriminating inputs are the built-in exotics and the
+// class instance: a "record" is a plain object, so anything carrying a
+// prototype other than `Object.prototype` or `null` is excluded, which is where
+// the naive "non-null object that is not an array" guard goes wrong. The class
+// instance in particular separates "is a plain object" from the looser "prints
+// as `[object Object]`". The primitives exercise the `typeof` early exit.
+export const RECORD_INPUTS: readonly unknown[] = [
+  { a: 1, b: 2 }, // plain object — record
+  {}, // empty object — still a record
+  { key: undefined }, // object with an undefined value — still a record
+  Object.create(null), // null-prototype object — still a record
+  new (class Example {
+    value = 1;
+  })(), // class instance — not a record (custom prototype)
+  new Map(), // Map — not a record
+  new Set(), // Set — not a record
+  new Date(), // Date — not a record
+  [], // array — not a record
+  () => undefined, // function — not a record
+  'hello', // string primitive — not a record
+  42, // number primitive — not a record
+  true, // boolean primitive — not a record
+  null, // not an object — not a record
+  undefined, // not an object — not a record
+];
