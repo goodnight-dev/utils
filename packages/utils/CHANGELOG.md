@@ -1,5 +1,12 @@
 # @goodnight-dev/utils
 
+## 0.4.4
+
+### Patch Changes
+
+- Updated dependencies [fa8f1d6]
+  - @goodnight-dev/string@0.5.0
+
 ## 0.4.3
 
 ### Patch Changes
