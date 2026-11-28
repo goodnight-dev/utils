@@ -11,6 +11,21 @@
 
 ## Chosen implementation
 
+`snakeCase` is a one-line wrapper over the shared word-splitting engine
+`toDelimitedCase`, which it calls with an underscore;
+[`kebabCase`](./kebab-case.md) calls the same engine with a hyphen. The engine
+was extracted to [`delimited-case.ts`](./delimited-case.ts) so the one algorithm
+is written once, not twice; the extraction is behaviour-preserving and
+performance-neutral — the benchmark below is unchanged within noise.
+
+```ts
+export function snakeCase(value: string): string {
+  return toDelimitedCase(value, '_');
+}
+```
+
+The engine itself:
+
 ```ts
 const UNICODE_ALPHANUMERIC_REGEX = /\p{L}|\p{N}/u;
 
@@ -24,7 +39,7 @@ function isLowercaseAt(value: string, index: number): boolean {
   return character.toUpperCase() !== character;
 }
 
-export function snakeCase(value: string): string {
+export function toDelimitedCase(value: string, separator: string): string {
   const length = value.length;
   const output: string[] = [];
 
@@ -72,9 +87,9 @@ export function snakeCase(value: string): string {
 
     if (started) {
       if (pendingSeparator) {
-        output.push('_');
+        output.push(separator);
       } else if (isUpper && (!prevWasUpper || isLowercaseAt(value, i + step))) {
-        output.push('_');
+        output.push(separator);
       }
     }
 
@@ -110,10 +125,9 @@ Why this one:
   camelHump inserts a `_` _without consuming an input character_
   (`'aB'.length === 2` but `snakeCase('aB') === 'a_b'`, three characters), so
   that bound no longer holds. Rather than pre-size to a looser `2 * length` and
-  carry the trimming bookkeeping, the chosen form uses `push`. The benchmark
-  (below) confirms this is the right call: the readable regex is the only
-  correct rival and it is far slower, so there is no pre-sizing win being left
-  on the table.
+  carry the trimming bookkeeping, the engine uses `push`. The benchmark (below)
+  confirms this is the right call: the readable regex is the only correct rival
+  and it is far slower, so there is no pre-sizing win being left on the table.
 - **Unicode-correct case detection.** "Uppercase" is "has a distinct lowercase
   form" (`character !== raw`), so accented Latin, Greek, and Cyrillic split at
   their humps (`HélloWörld` → `héllo_wörld`); caseless scripts (CJK) and digits
