@@ -1,5 +1,17 @@
 # @goodnight-dev/string
 
+## 0.5.0
+
+### Minor Changes
+
+- fa8f1d6: Add `kebabCase`, which converts a string to kebab-case: words are lowercased and
+  joined with single hyphens, with non-alphanumeric runs and camelHumps as word
+  boundaries (`kebabCase('fooBar')` is `'foo-bar'` and
+  `kebabCase('XMLHttpRequest')` is `'xml-http-request'`). Word detection and
+  casing are Unicode-correct. It shares its word-splitting engine with
+  `snakeCase`, which is refactored onto the same engine with no change in
+  behaviour.
+
 ## 0.4.0
 
 ### Minor Changes
