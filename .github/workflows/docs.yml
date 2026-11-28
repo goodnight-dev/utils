@@ -1,8 +1,17 @@
 name: Docs
 
 on:
+  # Docs are generated from source TSDoc (typedoc runs with includeVersion:
+  # false), so only rebuild when something that changes the rendered site
+  # changes. This skips release ("Version Packages") and dependency-bump merges,
+  # which would otherwise republish an identical docs site on every push to main.
   push:
     branches: [main]
+    paths:
+      - 'packages/*/src/**'
+      - 'packages/*/README.md'
+      - 'typedoc.json'
+      - '.github/workflows/docs.yml'
   workflow_dispatch:
 
 # Grant the token what it needs to publish to GitHub Pages.
